@@ -1,8 +1,6 @@
 package com.application.strms.infrastructure.persistence;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Function;
@@ -26,6 +24,21 @@ public class FileHandler {
 
         } catch (Exception e) {
             throw new RuntimeException("Error while reading file: " + path, e);
+        }
+    }
+
+    public <T> void save(String name, List<T> data, Function<T, String> mapper) {
+        String path = "src/main/resources/com/application/strms/data/" + name;
+
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path, true), StandardCharsets.UTF_8))) {
+
+            for (T element : data) {
+                writer.write(mapper.apply(element));
+                writer.newLine();
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error while writing file: " + path, e);
         }
     }
 }

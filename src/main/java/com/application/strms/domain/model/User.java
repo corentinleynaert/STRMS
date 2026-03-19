@@ -18,6 +18,10 @@ public class User {
         this.passwordHash = passwordHash;
     }
 
+    public User(String name, Email email, String passwordHash) {
+        this(new UserId(), name, email, passwordHash);
+    }
+
     public UserId id() {
         return id;
     }
@@ -32,5 +36,17 @@ public class User {
 
     public String passwordHash() {
         return passwordHash;
+    }
+
+    public boolean isAdmin() {
+        return this instanceof Admin;
+    }
+
+    public boolean isEngineer() {
+        return this instanceof Engineer;
+    }
+
+    public boolean isManager() {
+        return this instanceof Manager;
     }
 }

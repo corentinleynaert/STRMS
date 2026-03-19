@@ -1,0 +1,25 @@
+.role-choice .label {
+    -fx-text-fill: white;
+}
+
+.role-choice .context-menu {
+    -fx-background-color: #1e293b;
+}
+
+.role-choice .menu-item {
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+}
+
+.role-choice .menu-item:focused {
+    -fx-background-color: #334155;
+}
+
+.role-choice .menu-item:selected {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: white;
+}
+
+.role-choice .menu-item .left-container .check-mark {
+    -fx-background-color: white;
+}

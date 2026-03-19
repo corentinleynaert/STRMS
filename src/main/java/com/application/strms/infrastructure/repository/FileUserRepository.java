@@ -32,6 +32,11 @@ public class FileUserRepository implements UserRepository {
         return null;
     }
 
+    @Override
+    public void addUser(User user) {
+        fileHandler.save("users.txt", List.of(user), this::mapUserToLine);
+    }
+
     private User mapLineToUser(String line) {
         String[] parts = line.split(";");
 
@@ -51,5 +56,20 @@ public class FileUserRepository implements UserRepository {
             case "ENGINEER" -> new Engineer(id, name, email, password);
             default -> throw new IllegalArgumentException("Unknown role: " + role);
         };
+    }
+
+    private String mapUserToLine(User user) {
+        String role = switch (user) {
+            case Admin a -> "ADMIN";
+            case Manager m -> "MANAGER";
+            case Engineer e -> "ENGINEER";
+            default -> throw new IllegalArgumentException("Unknown user type: " + user.getClass());
+        };
+
+        return user.id().value() + ";" +
+                user.name() + ";" +
+                user.email().value() + ";" +
+                user.passwordHash() + ";" +
+                role;
     }
 }

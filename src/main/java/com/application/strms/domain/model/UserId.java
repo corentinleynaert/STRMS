@@ -4,11 +4,21 @@ import java.util.Objects;
 
 public class UserId {
     private final Integer value;
+    private static Integer current_value = 0;
 
     public UserId(Integer value) {
         if (value == null) throw new IllegalArgumentException("Id cannot be null");
 
         this.value = value;
+
+        if (value > current_value) {
+            current_value = value + 1;
+        }
+    }
+
+    public UserId() {
+        this.value = current_value;
+        current_value++;
     }
 
     public Integer value() {

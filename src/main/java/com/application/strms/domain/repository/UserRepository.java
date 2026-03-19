@@ -5,4 +5,5 @@ import com.application.strms.domain.model.User;
 
 public interface UserRepository {
     User findByEmail(Email email);
+    void addUser(User user);
 }
