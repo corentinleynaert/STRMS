@@ -4,22 +4,22 @@ public class User {
     private final UserId id;
     private final String name;
     private final Email email;
-    private final String passwordHash;
+    private final String role;
 
-    public User(UserId id, String name, Email email, String passwordHash) {
-        if (id == null) throw new IllegalArgumentException("Id cannot be null");
-        if (name == null || name.isBlank()) throw new IllegalArgumentException("Name cannot be empty");
-        if (email == null) throw new IllegalArgumentException("Email cannot be null");
-        if (passwordHash == null || passwordHash.isBlank()) throw new IllegalArgumentException("Password hash cannot be empty");
+    public User(UserId id, String name, Email email, String role) {
+        if (id == null) { throw new IllegalArgumentException("Id cannot be null"); }
+        if (name == null || name.isBlank()) { throw new IllegalArgumentException("Name cannot be empty"); }
+        if (email == null) { throw new IllegalArgumentException("Email cannot be null"); }
+        if (role == null || role.isBlank()) { throw new IllegalArgumentException("Role cannot be empty"); }
 
         this.id = id;
         this.name = name;
         this.email = email;
-        this.passwordHash = passwordHash;
+        this.role = role;
     }
 
-    public User(String name, Email email, String passwordHash) {
-        this(new UserId(), name, email, passwordHash);
+    public User(String name, Email email, String role) {
+        this(new UserId(), name, email, role);
     }
 
     public UserId id() {
@@ -34,8 +34,8 @@ public class User {
         return email;
     }
 
-    public String passwordHash() {
-        return passwordHash;
+    public String role() {
+        return role;
     }
 
     public boolean isAdmin() {

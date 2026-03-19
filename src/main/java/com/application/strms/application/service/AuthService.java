@@ -32,16 +32,26 @@ public class AuthService {
             return LoginResult.failure("User not found");
         }
 
-        if (!passwordHasher.verify(password, user.passwordHash())) {
+        UserAuth userAuth = userRepository.findAuthByEmail(email);
+
+        if (userAuth == null) {
+            return LoginResult.failure("Authentication data not found");
+        }
+
+        if (!passwordHasher.verify(password, userAuth.passwordHash())) {
             return LoginResult.failure("Invalid password");
         }
 
         return LoginResult.success(user);
     }
 
-    public AddUserResult addUser(User user, String name,String emailRaw, String passwordRaw, String role) {
+    public AddUserResult addUser(User currentUser, String name, String emailRaw, String passwordRaw, String role) {
         Email email;
         Password password;
+
+        if (!currentUser.isAdmin()) {
+            return AddUserResult.failure("Insufficient permissions");
+        }
 
         try {
             email = new Email(emailRaw);
@@ -56,17 +66,18 @@ public class AuthService {
 
         String passwordHashed = this.passwordHasher.hash(password);
 
-        User new_user = switch (role) {
-            case "ADMIN" -> new Admin(name, email, passwordHashed);
-            case "MANAGER" -> new Manager(name, email,passwordHashed);
-            case "ENGINEER" -> new Engineer(name, email, passwordHashed);
+        User newUser = switch (role) {
+            case "ADMIN" -> new Admin(name, email);
+            case "MANAGER" -> new Manager(name, email);
+            case "ENGINEER" -> new Engineer(name, email);
             default -> throw new IllegalArgumentException("Unknown role: " + role);
         };
 
-        try {
-            this.userRepository.addUser(new_user);
+        UserAuth userAuth = new UserAuth(newUser.id(), passwordHashed);
 
-            return AddUserResult.success(new_user);
+        try {
+            this.userRepository.addUser(newUser, userAuth);
+            return AddUserResult.success(newUser);
         } catch (Exception e) {
             return AddUserResult.failure(e.getMessage());
         }

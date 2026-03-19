@@ -1,7 +1,6 @@
 package com.application.strms.presentation.controller;
 
 import com.application.strms.application.result.AddUserResult;
-import com.application.strms.application.result.LoginResult;
 import com.application.strms.application.service.AuthService;
 import com.application.strms.application.session.SessionManager;
 import javafx.animation.TranslateTransition;
@@ -30,24 +29,25 @@ public class AddUser extends BaseController {
         navigator.goTo("Home");
     }
 
-    @FXML protected void addUser() {
-            AuthService authService = context.authService();
-            SessionManager sessionManager = context.sessionManager();
+    @FXML
+    protected void addUser() {
+        AuthService authService = context.authService();
+        SessionManager sessionManager = context.sessionManager();
 
-            String name = name_field.getText().trim();
-            String email = email_field.getText().trim();
-            String password = password_field.getText();
-            String role = role_choice.getValue();
+        String name = name_field.getText().trim();
+        String email = email_field.getText().trim();
+        String password = password_field.getText();
+        String role = role_choice.getValue();
 
-            AddUserResult result = authService.addUser(sessionManager.currentUser(), name, email, password, role);
+        AddUserResult result = authService.addUser(sessionManager.currentUser(), name, email, password, role);
 
-            if (result.isSuccess()) {
-                handleSuccess();
-                navigator.goTo("Home");
-            } else {
-                showError(result.error());
-                shakeNode(email_field);
-            }
+        if (result.isSuccess()) {
+            handleSuccess();
+            navigator.goTo("Home");
+        } else {
+            showError(result.error());
+            shakeNode(email_field);
+        }
 
     }
 

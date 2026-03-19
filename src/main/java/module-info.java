@@ -1,7 +1,9 @@
 module com.application.strms {
     requires javafx.controls;
-    requires javafx.fxml;
     requires jbcrypt;
+
+    requires transitive javafx.graphics;
+    requires transitive javafx.fxml;
 
     exports com.application.strms.app;
     exports com.application.strms.presentation.controller;
@@ -14,8 +16,9 @@ module com.application.strms {
     exports com.application.strms.application.service;
     exports com.application.strms.application.result;
     exports com.application.strms.presentation.loader;
+    exports com.application.strms.application;
+    exports com.application.strms.application.session;
 
-    opens com.application.strms.presentation to javafx.fxml;
     opens com.application.strms.app to javafx.fxml;
     opens com.application.strms.presentation.loader to javafx.fxml;
     opens com.application.strms.presentation.navigation to javafx.fxml;
