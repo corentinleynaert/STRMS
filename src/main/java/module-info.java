@@ -1,8 +1,11 @@
-module com.streat.strms {
+module com.application.strms {
     requires javafx.controls;
     requires javafx.fxml;
     requires jbcrypt;
 
-    opens com.streat.strms to javafx.fxml;
-    exports com.streat.strms;
+    exports com.application.strms.app;
+    exports com.application.strms.view;
+    exports com.application.strms.utils;
+
+    opens com.application.strms.view to javafx.fxml;
 }
