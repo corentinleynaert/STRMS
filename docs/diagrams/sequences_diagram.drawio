@@ -1,0 +1,219 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0" version="29.6.4">
+  <diagram name="Page-1" id="8EE7s1eNIqck13tJQhDt">
+    <mxGraphModel dx="1106" dy="607" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="QiLXv30VAVA_hhIjc_J5-0" />
+        <mxCell id="QiLXv30VAVA_hhIjc_J5-1" parent="QiLXv30VAVA_hhIjc_J5-0" />
+        <mxCell id="QDawPEN055Rn9l7_reDn-0" parent="QiLXv30VAVA_hhIjc_J5-1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" value="&lt;div&gt;Engineer&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="30" x="63.75" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-7" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="endArrow=none;dashed=1;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="80" y="480" as="sourcePoint" />
+            <mxPoint x="80" y="120" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-12" parent="QiLXv30VAVA_hhIjc_J5-1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" value="&lt;div&gt;Admin&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="30" x="130" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-13" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="endArrow=none;dashed=1;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="146" y="480" as="sourcePoint" />
+            <mxPoint x="146.25" y="120" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-14" parent="QiLXv30VAVA_hhIjc_J5-1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" value="Manager" vertex="1">
+          <mxGeometry height="60" width="30" x="200" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-16" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" source="QDawPEN055Rn9l7_reDn-35" style="endArrow=none;dashed=1;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="390" y="380" as="sourcePoint" />
+            <mxPoint x="390" y="120" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-17" parent="QiLXv30VAVA_hhIjc_J5-1" style="rounded=1;whiteSpace=wrap;html=1;" value="TaskManager" vertex="1">
+          <mxGeometry height="30" width="80" x="350" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-18" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" target="QDawPEN055Rn9l7_reDn-24" value="addTask(id, title, priority)">
+          <mxGeometry relative="1" width="80" x="0.1667" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="150" y="140" as="sourcePoint" />
+            <mxPoint x="370" y="140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-21" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" target="QDawPEN055Rn9l7_reDn-24" value="&lt;div&gt;checkRole(Admin)&lt;/div&gt;">
+          <mxGeometry relative="1" width="80" x="-0.25" y="25" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="415" y="150" />
+              <mxPoint x="425" y="150" />
+              <mxPoint x="425" y="170" />
+            </Array>
+            <mxPoint x="395" y="150" as="sourcePoint" />
+            <mxPoint x="400" y="180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-24" parent="QiLXv30VAVA_hhIjc_J5-1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" value="" vertex="1">
+          <mxGeometry height="70" width="10" x="385" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-25" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="endArrow=none;dashed=1;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="215" y="480" as="sourcePoint" />
+            <mxPoint x="214.5" y="120" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-26" parent="QiLXv30VAVA_hhIjc_J5-1" style="rounded=1;whiteSpace=wrap;html=1;" value="&lt;div&gt;Task NewTask&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="80" x="540" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-27" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" value="&lt;div&gt;new()&lt;/div&gt;">
+          <mxGeometry relative="1" width="80" x="-0.037" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="395" y="180" as="sourcePoint" />
+            <mxPoint x="580" y="180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-28" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="endArrow=none;dashed=1;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="580" y="480" as="sourcePoint" />
+            <mxPoint x="579.5" y="170" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-29" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" value="Task Created Success">
+          <mxGeometry relative="1" x="-0.1915" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="385" y="200" as="sourcePoint" />
+            <mxPoint x="150" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-34" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" value="assignTask(idTask, idEngineer)">
+          <mxGeometry relative="1" width="80" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="215" y="230" as="sourcePoint" />
+            <mxPoint x="385" y="230" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-36" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" source="QDawPEN055Rn9l7_reDn-42" style="endArrow=none;dashed=1;html=1;rounded=0;" target="QDawPEN055Rn9l7_reDn-35" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="390" y="380" as="sourcePoint" />
+            <mxPoint x="390" y="120" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-35" parent="QiLXv30VAVA_hhIjc_J5-1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" value="" vertex="1">
+          <mxGeometry height="90" width="10" x="385" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-37" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" value="&lt;div&gt;checkRole(Manager)&lt;/div&gt;">
+          <mxGeometry relative="1" width="80" x="-0.25" y="25" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="415" y="240" />
+              <mxPoint x="425" y="240" />
+              <mxPoint x="425" y="260" />
+            </Array>
+            <mxPoint x="395" y="240" as="sourcePoint" />
+            <mxPoint x="395" y="260" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-38" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" value="assignTask(idTask, idEngineer)">
+          <mxGeometry relative="1" width="80" x="0.027" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="395" y="270" as="sourcePoint" />
+            <mxPoint x="580" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-39" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" value="&lt;div&gt;addHistory(&#39;Assigned by Manager&#39;, TimeStamp)&lt;/div&gt;">
+          <mxGeometry relative="1" width="80" x="0.25" y="102" as="geometry">
+            <mxPoint x="100" y="-82" as="offset" />
+            <Array as="points">
+              <mxPoint x="600" y="280" />
+              <mxPoint x="610" y="280" />
+              <mxPoint x="610" y="300" />
+            </Array>
+            <mxPoint x="580" y="280" as="sourcePoint" />
+            <mxPoint x="580" y="300" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-40" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" value="Assignement Confirmed">
+          <mxGeometry relative="1" x="-0.0286" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="385" y="310" as="sourcePoint" />
+            <mxPoint x="210" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-41" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" target="QDawPEN055Rn9l7_reDn-42" value="upDate(id, IN PROGRESS)">
+          <mxGeometry relative="1" width="80" x="0.4426" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="80" y="340" as="sourcePoint" />
+            <mxPoint x="370" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-43" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="endArrow=none;dashed=1;html=1;rounded=0;" target="QDawPEN055Rn9l7_reDn-42" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="390" y="380" as="sourcePoint" />
+            <mxPoint x="390" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-42" parent="QiLXv30VAVA_hhIjc_J5-1" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" value="" vertex="1">
+          <mxGeometry height="110" width="10" x="385" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-44" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" value="checkPrerequisites(idTask)">
+          <mxGeometry relative="1" width="80" x="0.027" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="395" y="350" as="sourcePoint" />
+            <mxPoint x="580" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-45" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" target="QDawPEN055Rn9l7_reDn-42" value="Prerequisites ok">
+          <mxGeometry relative="1" x="-0.0286" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="580" y="380" as="sourcePoint" />
+            <mxPoint x="400" y="379.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-46" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" value="setStatus(IN PROGRESS)">
+          <mxGeometry relative="1" width="80" x="0.027" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="395" y="410" as="sourcePoint" />
+            <mxPoint x="580" y="410" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-47" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="endArrow=none;dashed=1;html=1;rounded=0;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="390" y="450" as="sourcePoint" />
+            <mxPoint x="390" y="480" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-48" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" value="Status Updated">
+          <mxGeometry relative="1" x="-0.4426" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="385" y="430" as="sourcePoint" />
+            <mxPoint x="80" y="430" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-49" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" value="&lt;div&gt;addHistory(&#39;Created by Admin&#39;,TimeStamp)&lt;/div&gt;">
+          <mxGeometry relative="1" width="80" x="0.25" y="92" as="geometry">
+            <mxPoint x="90" y="-72" as="offset" />
+            <Array as="points">
+              <mxPoint x="600" y="190" />
+              <mxPoint x="610" y="190" />
+              <mxPoint x="610" y="210" />
+            </Array>
+            <mxPoint x="580" y="190" as="sourcePoint" />
+            <mxPoint x="580" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="QDawPEN055Rn9l7_reDn-50" edge="1" parent="QiLXv30VAVA_hhIjc_J5-1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" value="&lt;div&gt;addHistory(&#39;Status update by Engineer&#39;, TimeStamp)&lt;/div&gt;">
+          <mxGeometry relative="1" width="80" x="0.25" y="102" as="geometry">
+            <mxPoint x="100" y="-82" as="offset" />
+            <Array as="points">
+              <mxPoint x="600" y="420" />
+              <mxPoint x="610" y="420" />
+              <mxPoint x="610" y="440" />
+            </Array>
+            <mxPoint x="580" y="420" as="sourcePoint" />
+            <mxPoint x="580" y="440" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

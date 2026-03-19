@@ -1,7 +1,6 @@
 package com.application.strms.domain.model;
 
 public class User {
-
     private final UserId id;
     private final String name;
     private final Email email;
