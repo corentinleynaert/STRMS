@@ -5,6 +5,7 @@ import com.application.strms.application.result.LoginResult;
 import com.application.strms.domain.model.*;
 import com.application.strms.domain.repository.UserRepository;
 import com.application.strms.domain.service.PasswordHasher;
+import java.io.IOException;
 
 public class AuthService {
     private final UserRepository userRepository;
@@ -15,7 +16,7 @@ public class AuthService {
         this.passwordHasher = passwordHasher;
     }
 
-    public LoginResult login(String emailRaw, String passwordRaw) {
+    public LoginResult login(String emailRaw, String passwordRaw) throws IOException {
         Email email;
         Password password;
 
@@ -29,23 +30,28 @@ public class AuthService {
         User user = userRepository.findByEmail(email);
 
         if (user == null) {
-            return LoginResult.failure("User not found");
+            return LoginResult.failure("Invalid email or password");
         }
 
-        UserAuth userAuth = userRepository.findAuthByEmail(email);
+        try {
+            UserAuth userAuth = userRepository.findAuthByEmail(email);
 
-        if (userAuth == null) {
-            return LoginResult.failure("Authentication data not found");
+            if (userAuth == null) {
+                return LoginResult.failure("Authentication data not found");
+            }
+
+            if (!passwordHasher.verify(password, userAuth.getPasswordHash())) {
+                return LoginResult.failure("Invalid email or password");
+            }
+
+            return LoginResult.success(user);
+        } catch (IOException e) {
+            throw new IOException("Error accessing authentication data during login", e);
         }
-
-        if (!passwordHasher.verify(password, userAuth.passwordHash())) {
-            return LoginResult.failure("Invalid password");
-        }
-
-        return LoginResult.success(user);
     }
 
-    public AddUserResult addUser(User currentUser, String name, String emailRaw, String passwordRaw, String role) {
+    public AddUserResult addUser(User currentUser, String name, String emailRaw, String passwordRaw, String role)
+            throws IOException {
         Email email;
         Password password;
 
@@ -60,24 +66,26 @@ public class AuthService {
             return AddUserResult.failure("Invalid input");
         }
 
-        if (userRepository.findByEmail(email) != null) {
-            return AddUserResult.failure("User with email " + email.value() + " already exists");
-        }
-
-        String passwordHashed = this.passwordHasher.hash(password);
-
-        User newUser = switch (role) {
-            case "ADMIN" -> new Admin(name, email);
-            case "MANAGER" -> new Manager(name, email);
-            case "ENGINEER" -> new Engineer(name, email);
-            default -> throw new IllegalArgumentException("Unknown role: " + role);
-        };
-
-        UserAuth userAuth = new UserAuth(newUser.id(), passwordHashed);
-
         try {
+            if (userRepository.findByEmail(email) != null) {
+                return AddUserResult.failure("User with email " + email + " already exists");
+            }
+
+            String passwordHashed = this.passwordHasher.hash(password);
+
+            User newUser = switch (role) {
+                case "ADMIN" -> new Admin(name, email);
+                case "MANAGER" -> new Manager(name, email);
+                case "ENGINEER" -> new Engineer(name, email);
+                default -> throw new IllegalArgumentException("Unknown role: " + role);
+            };
+
+            UserAuth userAuth = new UserAuth(newUser.getId(), passwordHashed);
+
             this.userRepository.addUser(newUser, userAuth);
-            return AddUserResult.success(newUser);
+            return AddUserResult.success();
+        } catch (IOException e) {
+            throw new IOException("Error accessing user repository while adding user", e);
         } catch (Exception e) {
             return AddUserResult.failure(e.getMessage());
         }

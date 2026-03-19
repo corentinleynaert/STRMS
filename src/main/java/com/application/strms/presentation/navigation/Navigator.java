@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import java.io.IOException;
 
 public class Navigator {
 
@@ -40,8 +41,10 @@ public class Navigator {
 
             stage.show();
 
+        } catch (IOException e) {
+            throw new RuntimeException("Navigation failed for view: " + viewName, e);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Unexpected error during navigation to: " + viewName, e);
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.application.strms.domain.model;
 
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class Email {
@@ -17,7 +16,7 @@ public class Email {
         this.value = value;
     }
 
-    public String value() {
+    public String toString() {
         return value;
     }
 
@@ -27,10 +26,5 @@ public class Email {
         if (!(o instanceof Email email)) return false;
 
         return value.equals(email.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(value);
     }
 }

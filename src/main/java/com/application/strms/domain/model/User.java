@@ -22,19 +22,19 @@ public class User {
         this(new UserId(), name, email, role);
     }
 
-    public UserId id() {
+    public UserId getId() {
         return id;
     }
 
-    public String name() {
+    public String getName() {
         return name;
     }
 
-    public Email email() {
+    public Email getEmail() {
         return email;
     }
 
-    public String role() {
+    public String getRole() {
         return role;
     }
 

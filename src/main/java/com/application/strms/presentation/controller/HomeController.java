@@ -10,11 +10,11 @@ public class HomeController extends BaseController {
 
     @Override
     protected void onReady() {
-        if (context.sessionManager().isAuthenticated()) {
-            welcome_label.setText("Welcome, " + context.sessionManager().currentUser().name());
+        if (context.getSessionManager().isAuthenticated()) {
+            welcome_label.setText("Welcome, " + context.getSessionManager().getcurrentUser().getName());
         }
 
-        if (context.sessionManager().currentUser().isAdmin()) {
+        if (context.getSessionManager().getcurrentUser().isAdmin()) {
             admin_panel.setManaged(true);
             admin_panel.setVisible(true);
         }
@@ -22,13 +22,13 @@ public class HomeController extends BaseController {
 
     @FXML
     protected void logout() {
-        context.sessionManager().logout();
+        context.getSessionManager().logout();
         navigator.goTo("Login");
     }
 
     @FXML
     protected void goToAddUser() {
-        if (this.context.sessionManager().currentUser().isAdmin()) {
+        if (this.context.getSessionManager().getcurrentUser().isAdmin()) {
             navigator.goTo("AddUser");
         } else {
             throw new IllegalStateException("Only admins can access the add user page.");

@@ -22,33 +22,37 @@ import javafx.geometry.Rectangle2D;
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = ViewLoader.load("Login");
-        Parent root = loader.load();
+        try {
+            FXMLLoader loader = ViewLoader.load("Login");
+            Parent root = loader.load();
 
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        Scene scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
+            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+            Scene scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
 
-        FileHandler fileHandler = new FileHandler();
-        UserRepository userRepository = new FileUserRepository(fileHandler);
-        PasswordHasher passwordHasher = new BCryptPasswordHasher();
-        AuthService authService = new AuthService(userRepository, passwordHasher);
-        SessionManager sessionManager = new SessionManager();
-        ApplicationContext applicationContext = new ApplicationContext(authService, sessionManager);
-        Navigator navigator = new Navigator(stage, applicationContext);
+            FileHandler fileHandler = new FileHandler();
+            UserRepository userRepository = new FileUserRepository(fileHandler);
+            PasswordHasher passwordHasher = new BCryptPasswordHasher();
+            AuthService authService = new AuthService(userRepository, passwordHasher);
+            SessionManager sessionManager = new SessionManager();
+            ApplicationContext applicationContext = new ApplicationContext(authService, sessionManager);
+            Navigator navigator = new Navigator(stage, applicationContext);
 
-        LoginController controller = loader.getController();
-        controller.setApplicationContext(applicationContext);
-        controller.setNavigator(navigator);
+            LoginController controller = loader.getController();
+            controller.setApplicationContext(applicationContext);
+            controller.setNavigator(navigator);
 
-        stage.setTitle("STRMS");
-        stage.setScene(scene);
-        stage.setX(screenBounds.getMinX());
-        stage.setY(screenBounds.getMinY());
-        stage.setWidth(screenBounds.getWidth());
-        stage.setHeight(screenBounds.getHeight());
-        stage.setMaximized(true);
-        stage.setMinWidth(800);
-        stage.setMinHeight(600);
-        stage.show();
+            stage.setTitle("STRMS");
+            stage.setScene(scene);
+            stage.setX(screenBounds.getMinX());
+            stage.setY(screenBounds.getMinY());
+            stage.setWidth(screenBounds.getWidth());
+            stage.setHeight(screenBounds.getHeight());
+            stage.setMaximized(true);
+            stage.setMinWidth(800);
+            stage.setMinHeight(600);
+            stage.show();
+        } catch (IllegalArgumentException e) {
+            System.exit(1);
+        }
     }
 }

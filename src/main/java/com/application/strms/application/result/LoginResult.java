@@ -25,7 +25,7 @@ public class LoginResult {
         return success;
     }
 
-    public String error() {
+    public String toString() {
         return error;
     }
 

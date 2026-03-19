@@ -9,11 +9,11 @@ public class BCryptPasswordHasher implements PasswordHasher {
 
     @Override
     public String hash(Password password) {
-        return BCrypt.hashpw(password.value(), BCrypt.gensalt(WORK_FACTOR));
+        return BCrypt.hashpw(password.toString(), BCrypt.gensalt(WORK_FACTOR));
     }
 
     @Override
     public boolean verify(Password password, String storedHash) {
-        return BCrypt.checkpw(password.value(), storedHash);
+        return BCrypt.checkpw(password.toString(), storedHash);
     }
 }

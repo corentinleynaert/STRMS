@@ -17,11 +17,11 @@ public class UserAuth {
         this.passwordHash = passwordHash;
     }
 
-    public UserId id() {
+    public UserId getId() {
         return id;
     }
 
-    public String passwordHash() {
+    public String getPasswordHash() {
         return passwordHash;
     }
 }

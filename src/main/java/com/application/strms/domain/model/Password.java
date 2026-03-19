@@ -11,7 +11,7 @@ public class Password {
         this.value = value;
     }
 
-    public String value() {
+    public String toString() {
         return value;
     }
 }

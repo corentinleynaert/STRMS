@@ -12,11 +12,11 @@ public class ApplicationContext {
         this.sessionManager = sessionManager;
     }
 
-    public AuthService authService() {
+    public AuthService getAuthService() {
         return authService;
     }
 
-    public SessionManager sessionManager() {
+    public SessionManager getSessionManager() {
         return sessionManager;
     }
 }

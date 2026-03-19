@@ -1,5 +1,7 @@
 package com.application.strms.presentation.controller;
 
+import java.io.IOException;
+
 import com.application.strms.application.ApplicationContext;
 import com.application.strms.application.result.LoginResult;
 import com.application.strms.application.service.AuthService;
@@ -18,10 +20,14 @@ public class LoginController extends BaseController {
     private ApplicationContext context;
     private Navigator navigator;
 
-    @FXML private TextField email_field;
-    @FXML private PasswordField password_field;
-    @FXML private Label errors;
-    @FXML private Button login_button;
+    @FXML
+    private TextField email_field;
+    @FXML
+    private PasswordField password_field;
+    @FXML
+    private Label errors;
+    @FXML
+    private Button login_button;
 
     @Override
     public void setApplicationContext(ApplicationContext context) {
@@ -37,8 +43,8 @@ public class LoginController extends BaseController {
     public void initialize() {
         hideError();
 
-        email_field.textProperty().addListener((obs, oldValue, newValue) -> updateLoginButtonState());
-        password_field.textProperty().addListener((obs, oldValue, newValue) -> updateLoginButtonState());
+        email_field.textProperty().addListener((_, _, _) -> updateLoginButtonState());
+        password_field.textProperty().addListener((_, _, _) -> updateLoginButtonState());
 
         setupButtonEffects();
         updateLoginButtonState();
@@ -46,20 +52,26 @@ public class LoginController extends BaseController {
 
     @FXML
     protected void login() {
-        AuthService authService = context.authService();
-        SessionManager sessionManager = context.sessionManager();
+        AuthService authService = context.getAuthService();
+        SessionManager sessionManager = context.getSessionManager();
 
         String email = email_field.getText().trim();
         String password = password_field.getText();
 
-        LoginResult result = authService.login(email, password);
+        try {
+            LoginResult result = authService.login(email, password);
 
-        if (result.isSuccess()) {
-            sessionManager.login(result.user());
-            handleSuccess();
-            navigator.goTo("Home");
-        } else {
-            showError("Email or password is incorrect");
+            if (result.isSuccess()) {
+                sessionManager.login(result.user());
+                handleSuccess();
+                navigator.goTo("Home");
+            } else {
+                showError("Email or password is incorrect");
+                shakeNode(email_field);
+                shakeNode(password_field);
+            }
+        } catch (IOException e) {
+            showError("Error accessing user data: " + e.getMessage());
             shakeNode(email_field);
             shakeNode(password_field);
         }
@@ -86,11 +98,6 @@ public class LoginController extends BaseController {
         boolean isPasswordEmpty = password_field.getText() == null || password_field.getText().isEmpty();
 
         login_button.setDisable(isEmailEmpty || isPasswordEmpty);
-    }
-
-    @FXML
-    protected void enableLogin() {
-        updateLoginButtonState();
     }
 
     private void shakeNode(Node node) {

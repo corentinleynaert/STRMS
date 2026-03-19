@@ -4,6 +4,7 @@ import com.application.strms.domain.model.*;
 import com.application.strms.domain.repository.UserRepository;
 import com.application.strms.infrastructure.persistence.FileHandler;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,20 +13,24 @@ public class FileUserRepository implements UserRepository {
     private final Map<Integer, User> users = new HashMap<>();
     private final FileHandler fileHandler;
 
-    public FileUserRepository(FileHandler fileHandler) {
+    public FileUserRepository(FileHandler fileHandler) throws IOException {
         this.fileHandler = fileHandler;
 
-        List<User> loadedUsers = fileHandler.load("users.txt", this::mapLineToUser);
+        try {
+            List<User> loadedUsers = fileHandler.load("users.txt", this::mapLineToUser);
 
-        for (User user : loadedUsers) {
-            users.put(user.id().value(), user);
+            for (User user : loadedUsers) {
+                users.put(user.getId().value(), user);
+            }
+        } catch (IOException e) {
+            throw new IOException("Failed to initialize user repository from file", e);
         }
     }
 
     @Override
     public User findByEmail(Email email) {
         for (User user : users.values()) {
-            if (user.email().equals(email)) {
+            if (user.getEmail().equals(email)) {
                 return user;
             }
         }
@@ -33,23 +38,31 @@ public class FileUserRepository implements UserRepository {
     }
 
     @Override
-    public UserAuth findAuthByEmail(Email email) {
-        List<UserAuth> auths = fileHandler.load("users.txt", this::mapLineToUserAuth);
+    public UserAuth findAuthByEmail(Email email) throws IOException {
+        try {
+            List<UserAuth> auths = fileHandler.load("users.txt", this::mapLineToUserAuth);
 
-        for (UserAuth auth : auths) {
-            User user = findById(auth.id());
-            if (user != null && user.email().equals(email)) {
-                return auth;
+            for (UserAuth auth : auths) {
+                User user = findById(auth.getId());
+                if (user != null && user.getEmail().equals(email)) {
+                    return auth;
+                }
             }
-        }
 
-        return null;
+            return null;
+        } catch (IOException e) {
+            throw new IOException("Failed to find authentication by email: " + email, e);
+        }
     }
 
     @Override
-    public void addUser(User user, UserAuth userAuth) {
-        users.put(user.id().value(), user);
-        fileHandler.save("users.txt", List.of(new UserLine(user, userAuth)), this::mapUserLineToString);
+    public void addUser(User user, UserAuth userAuth) throws IOException {
+        try {
+            users.put(user.getId().value(), user);
+            fileHandler.save("users.txt", List.of(new UserLine(user, userAuth)), this::mapUserLineToString);
+        } catch (IOException e) {
+            throw new IOException("Failed to add user: " + user.getId(), e);
+        }
     }
 
     private User findById(UserId id) {
@@ -88,11 +101,11 @@ public class FileUserRepository implements UserRepository {
         User user = userLine.user();
         UserAuth auth = userLine.auth();
 
-        return user.id().value() + ";" +
-                user.name() + ";" +
-                user.email().value() + ";" +
-                auth.passwordHash() + ";" +
-                user.role();
+        return user.getId().value() + ";" +
+                user.getName() + ";" +
+                user.getEmail() + ";" +
+                auth.getPasswordHash() + ";" +
+                user.getRole();
     }
 
     private User createUserByRole(UserId id, String name, Email email, String role) {
