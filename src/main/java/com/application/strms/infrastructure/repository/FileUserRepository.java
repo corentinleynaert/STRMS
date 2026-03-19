@@ -1,8 +1,6 @@
 package com.application.strms.infrastructure.repository;
 
-import com.application.strms.domain.model.Email;
-import com.application.strms.domain.model.User;
-import com.application.strms.domain.model.UserId;
+import com.application.strms.domain.model.*;
 import com.application.strms.domain.repository.UserRepository;
 import com.application.strms.infrastructure.persistence.FileHandler;
 
@@ -37,15 +35,21 @@ public class FileUserRepository implements UserRepository {
     private User mapLineToUser(String line) {
         String[] parts = line.split(";");
 
-        if (parts.length != 4) {
+        if (parts.length != 5) {
             throw new IllegalArgumentException("Invalid line: " + line);
         }
 
-        return new User(
-                new UserId(Integer.parseInt(parts[0])),
-                parts[1],
-                new Email(parts[2]),
-                parts[3]
-        );
+        UserId id = new UserId(Integer.parseInt(parts[0]));
+        String name = parts[1];
+        Email email = new Email(parts[2]);
+        String password = parts[3];
+        String role = parts[4].toUpperCase();
+
+        return switch (role) {
+            case "ADMIN" -> new Admin(id, name, email, password);
+            case "MANAGER" -> new Manager(id, name, email, password);
+            case "ENGINEER" -> new Engineer(id, name, email, password);
+            default -> throw new IllegalArgumentException("Unknown role: " + role);
+        };
     }
 }
