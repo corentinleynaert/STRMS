@@ -21,6 +21,7 @@ public class AddUserResult {
         return success;
     }
 
+    @Override
     public String toString() {
         return error;
     }

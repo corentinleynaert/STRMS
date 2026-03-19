@@ -6,7 +6,11 @@ import java.net.URL;
 
 public class ViewLoader {
     public static FXMLLoader load(String name) throws IOException {
-        String path = "/com/application/strms/presentation/" + name + ".fxml";
+        String basePath = name.equals("Layout")
+                ? "/com/application/strms/presentation/"
+                : "/com/application/strms/presentation/pages/";
+
+        String path = basePath + name + ".fxml";
         URL fxmlUrl = ViewLoader.class.getResource(path);
 
         if (fxmlUrl == null) {

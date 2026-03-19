@@ -18,15 +18,6 @@ public class LayoutController {
         contentContainer.getChildren().setAll(content);
     }
 
-    public void addContent(Node content) {
-        contentContainer.getChildren().add(content);
-    }
-
-    public void clear() {
-        contentContainer.getChildren().clear();
-    }
-
-
     public void showNotification(String message) {
         Label notification = new Label(message);
         notification.getStyleClass().add("notification");

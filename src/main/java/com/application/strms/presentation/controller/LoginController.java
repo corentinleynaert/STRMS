@@ -20,14 +20,10 @@ public class LoginController extends BaseController {
     private ApplicationContext context;
     private Navigator navigator;
 
-    @FXML
-    private TextField email_field;
-    @FXML
-    private PasswordField password_field;
-    @FXML
-    private Label errors;
-    @FXML
-    private Button login_button;
+    @FXML private TextField email_field;
+    @FXML private PasswordField password_field;
+    @FXML private Label errors;
+    @FXML private Button login_button;
 
     @Override
     public void setApplicationContext(ApplicationContext context) {
@@ -41,12 +37,12 @@ public class LoginController extends BaseController {
 
     @FXML
     public void initialize() {
-        hideError();
-
         email_field.textProperty().addListener((_, _, _) -> updateLoginButtonState());
         password_field.textProperty().addListener((_, _, _) -> updateLoginButtonState());
 
-        setupButtonEffects();
+        login_button.setOnMouseEntered(_ -> login_button.setOpacity(0.9));
+        login_button.setOnMouseExited(_ -> login_button.setOpacity(1.0));
+
         updateLoginButtonState();
     }
 
@@ -63,7 +59,6 @@ public class LoginController extends BaseController {
 
             if (result.isSuccess()) {
                 sessionManager.login(result.user());
-                handleSuccess();
                 navigator.goTo("Home");
             } else {
                 showError("Email or password is incorrect");
@@ -77,20 +72,10 @@ public class LoginController extends BaseController {
         }
     }
 
-    private void handleSuccess() {
-        hideError();
-    }
-
     private void showError(String message) {
         errors.setText(message);
         errors.setManaged(true);
         errors.setVisible(true);
-    }
-
-    private void hideError() {
-        errors.setText("");
-        errors.setManaged(false);
-        errors.setVisible(false);
     }
 
     private void updateLoginButtonState() {
@@ -107,10 +92,5 @@ public class LoginController extends BaseController {
         tt.setCycleCount(4);
         tt.setAutoReverse(true);
         tt.playFromStart();
-    }
-
-    private void setupButtonEffects() {
-        login_button.setOnMouseEntered(_ -> login_button.setOpacity(0.9));
-        login_button.setOnMouseExited(_ -> login_button.setOpacity(1.0));
     }
 }

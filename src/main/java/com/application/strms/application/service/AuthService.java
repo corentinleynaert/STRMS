@@ -83,6 +83,7 @@ public class AuthService {
             UserAuth userAuth = new UserAuth(newUser.getId(), passwordHashed);
 
             this.userRepository.addUser(newUser, userAuth);
+
             return AddUserResult.success();
         } catch (IOException e) {
             throw new IOException("Error accessing user repository while adding user", e);

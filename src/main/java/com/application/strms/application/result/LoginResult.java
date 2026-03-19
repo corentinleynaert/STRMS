@@ -25,6 +25,7 @@ public class LoginResult {
         return success;
     }
 
+    @Override
     public String toString() {
         return error;
     }

@@ -36,7 +36,8 @@
                visible="false"/>
 
         <VBox spacing="12">
-            <Button text="Create user"
+            <Button fx:id="add_user_button"
+                    text="Create user"
                     onAction="#addUser"
                     maxWidth="Infinity"
                     styleClass="primary-button"/>
