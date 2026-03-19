@@ -24,19 +24,19 @@ public class AuthService {
             email = new Email(emailRaw);
             password = new Password(passwordRaw);
         } catch (IllegalArgumentException e) {
-            return LoginResult.INVALID_PASSWORD;
+            return LoginResult.failure("Invalid input");
         }
 
         User user = userRepository.findByEmail(email);
 
         if (user == null) {
-            return LoginResult.USER_NOT_FOUND;
+            return LoginResult.failure("User not found");
         }
 
         if (!passwordHasher.verify(password, user.passwordHash())) {
-            return LoginResult.INVALID_PASSWORD;
+            return LoginResult.failure("Invalid password");
         }
 
-        return LoginResult.SUCCESS;
+        return LoginResult.success(user);
     }
 }
