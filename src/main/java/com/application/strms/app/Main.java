@@ -13,14 +13,20 @@ import com.application.strms.presentation.navigation.Navigator;
 import com.application.strms.presentation.loader.ViewLoader;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.geometry.Rectangle2D;
 
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = ViewLoader.load("Login");
-        Scene scene = new Scene(loader.load(), 400, 300);
+        Parent root = loader.load();
+
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        Scene scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
 
         FileHandler fileHandler = new FileHandler();
         UserRepository userRepository = new FileUserRepository(fileHandler);
@@ -34,8 +40,15 @@ public class Main extends Application {
         controller.setApplicationContext(applicationContext);
         controller.setNavigator(navigator);
 
-        stage.setTitle("Application");
+        stage.setTitle("STRMS");
         stage.setScene(scene);
+        stage.setX(screenBounds.getMinX());
+        stage.setY(screenBounds.getMinY());
+        stage.setWidth(screenBounds.getWidth());
+        stage.setHeight(screenBounds.getHeight());
+        stage.setMaximized(true);
+        stage.setMinWidth(800);
+        stage.setMinHeight(600);
         stage.show();
     }
 }
