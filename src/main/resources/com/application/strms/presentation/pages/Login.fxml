@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml"
-           fx:controller="com.application.strms.presentation.controller.LoginController"
+           fx:controller="com.application.strms.presentation.controller.pages.LoginController"
            styleClass="page-root">
 
     <VBox alignment="CENTER" spacing="30.0" styleClass="card login-card">

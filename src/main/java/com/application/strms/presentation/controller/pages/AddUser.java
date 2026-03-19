@@ -1,10 +1,11 @@
-package com.application.strms.presentation.controller;
+package com.application.strms.presentation.controller.pages;
 
 import java.io.IOException;
 
 import com.application.strms.application.result.AddUserResult;
 import com.application.strms.application.service.AuthService;
 import com.application.strms.application.session.SessionManager;
+import com.application.strms.presentation.controller.BaseController;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -55,12 +56,11 @@ public class AddUser extends BaseController {
 
         try {
             AddUserResult result = authService.addUser(
-                    sessionManager.getcurrentUser(),
+                    sessionManager.getCurrentUser(),
                     name,
                     email,
                     password,
-                    role
-            );
+                    role);
 
             if (result.isSuccess()) {
                 navigator.notify("User created successfully!");

@@ -3,20 +3,11 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.control.Button?>
-
 <VBox alignment="CENTER" spacing="20.0"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.application.strms.presentation.controller.HomeController">
+      fx:controller="com.application.strms.presentation.controller.pages.HomeController">
 
     <Label fx:id="welcome_label"
            text="Welcome"
            style="-fx-font-size: 20px; -fx-font-weight: bold;" />
-    <Button text="Logout" onAction="#logout" />
-
-    <VBox alignment="CENTER" spacing="10" fx:id="admin_panel" visible="false" managed="false">
-        <Label text="Need to add a new user?" />
-
-        <Button text="Add user" onAction="#goToAddUser" />
-    </VBox>
 </VBox>

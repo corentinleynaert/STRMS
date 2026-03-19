@@ -13,7 +13,7 @@ public class SessionManager {
         this.currentUser = null;
     }
 
-    public User getcurrentUser() {
+    public User getCurrentUser() {
         return currentUser;
     }
 

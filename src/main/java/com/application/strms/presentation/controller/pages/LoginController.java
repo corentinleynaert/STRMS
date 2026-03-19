@@ -1,4 +1,4 @@
-package com.application.strms.presentation.controller;
+package com.application.strms.presentation.controller.pages;
 
 import java.io.IOException;
 
@@ -6,6 +6,7 @@ import com.application.strms.application.ApplicationContext;
 import com.application.strms.application.result.LoginResult;
 import com.application.strms.application.service.AuthService;
 import com.application.strms.application.session.SessionManager;
+import com.application.strms.presentation.controller.BaseController;
 import com.application.strms.presentation.navigation.Navigator;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;

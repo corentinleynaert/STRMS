@@ -145,3 +145,26 @@
     -fx-font-size: 13px;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 20, 0, 0, 8);
 }
+
+.topbar-container {
+    -fx-background-color: #1e293b;
+    -fx-padding: 10 20;
+}
+
+.topbar-right-content {
+    -fx-alignment: center-right;
+}
+
+.add-user-button {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.add-user-button:hover {
+    -fx-background-color: #1d4ed8;
+}

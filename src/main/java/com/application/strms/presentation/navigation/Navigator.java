@@ -17,25 +17,34 @@ public class Navigator {
     public Navigator(LayoutController layout, ApplicationContext context) {
         this.layout = layout;
         this.context = context;
+
+        this.layout.setApplicationContext(context);
+        this.layout.setNavigator(this);
     }
 
     public void goTo(String viewName) {
         try {
-            FXMLLoader loader = ViewLoader.load(viewName);
-            Node view = loader.load();
-
-            Object controller = loader.getController();
-            if (controller instanceof BaseController baseController) {
-                baseController.setApplicationContext(context);
-                baseController.setNavigator(this);
-            }
-
+            Node view = load(viewName);
             layout.setContent(view);
+            layout.updateTopbar();
         } catch (IOException e) {
             throw new RuntimeException("Navigation failed for view: " + viewName, e);
         } catch (Exception e) {
             throw new RuntimeException("Unexpected error during navigation to: " + viewName, e);
         }
+    }
+
+    private Node load(String name) throws IOException {
+        FXMLLoader loader = ViewLoader.load(name);
+        Node node = loader.load();
+
+        Object controller = loader.getController();
+        if (controller instanceof BaseController baseController) {
+            baseController.setApplicationContext(context);
+            baseController.setNavigator(this);
+        }
+
+        return node;
     }
 
     public void notify(String message) {
