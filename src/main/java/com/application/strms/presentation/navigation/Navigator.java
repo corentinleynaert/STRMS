@@ -45,4 +45,8 @@ public class Navigator {
     public Stage getStage() {
         return stage;
     }
+
+    public void notify(String message) {
+        layout.showNotification(message);
+    }
 }

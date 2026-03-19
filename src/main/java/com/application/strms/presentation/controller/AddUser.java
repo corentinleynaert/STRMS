@@ -78,6 +78,6 @@ public class AddUser extends BaseController {
     }
 
     private void handleSuccess() {
-        // Notifcation
+        navigator.notify("User created succesfully!");
     }
 }

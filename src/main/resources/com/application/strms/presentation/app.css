@@ -126,3 +126,22 @@
 .role-choice .menu-item .left-container .check-mark {
     -fx-background-color: white;
 }
+
+.notification-container {
+    -fx-alignment: top-right;
+    -fx-padding: 20;
+    -fx-spacing: 12;
+    -fx-max-width: Infinity;
+    -fx-max-height: Infinity;
+}
+
+.notification {
+    -fx-background-color: rgba(15, 23, 42, 0.96);
+    -fx-text-fill: white;
+    -fx-padding: 14 18;
+    -fx-background-radius: 14;
+    -fx-border-color: rgba(255,255,255,0.08);
+    -fx-border-radius: 14;
+    -fx-font-size: 13px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 20, 0, 0, 8);
+}

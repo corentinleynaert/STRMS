@@ -10,7 +10,7 @@ public class UserId {
 
         this.value = value;
 
-        if (value > current_value) {
+        if (value >= current_value) {
             current_value = value + 1;
         }
     }

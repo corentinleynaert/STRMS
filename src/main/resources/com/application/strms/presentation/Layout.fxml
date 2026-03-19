@@ -2,6 +2,7 @@
 
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml"
            fx:controller="com.application.strms.presentation.controller.LayoutController"
@@ -14,4 +15,10 @@
         </center>
     </BorderPane>
 
+    <VBox fx:id="notificationContainer"
+          mouseTransparent="true"
+          pickOnBounds="false"
+          alignment="TOP_RIGHT"
+          StackPane.alignment="TOP_RIGHT"
+          styleClass="notification-container"/>
 </StackPane>
