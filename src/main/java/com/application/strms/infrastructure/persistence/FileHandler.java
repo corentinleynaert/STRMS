@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 public class FileHandler {
     public <T> List<T> load(String name, Function<String, T> mapper) {
-        String path = "/data/" + name;
+        String path = "/com/application/strms/data/" + name; 
         InputStream is = FileHandler.class.getResourceAsStream(path);
 
         if (is == null) {
