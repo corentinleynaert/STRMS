@@ -36,7 +36,7 @@ public class Main extends Application {
 
             LayoutController layoutController = loader.getController();
 
-            Navigator navigator = new Navigator(stage, layoutController, applicationContext);
+            Navigator navigator = new Navigator(layoutController, applicationContext);
 
             Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
             Scene scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
