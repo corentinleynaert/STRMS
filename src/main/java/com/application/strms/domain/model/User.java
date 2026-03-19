@@ -1,39 +1,37 @@
 package com.application.strms.domain.model;
 
-public record User(Integer id, String name, String email, String passwordHash) {
-    private static int current_id = 0;
+public class User {
 
-    public User(Integer id, String name, String email, String passwordHash) {
+    private final UserId id;
+    private final String name;
+    private final Email email;
+    private final String passwordHash;
+
+    public User(UserId id, String name, Email email, String passwordHash) {
+        if (id == null) throw new IllegalArgumentException("Id cannot be null");
+        if (name == null || name.isBlank()) throw new IllegalArgumentException("Name cannot be empty");
+        if (email == null) throw new IllegalArgumentException("Email cannot be null");
+        if (passwordHash == null || passwordHash.isBlank()) throw new IllegalArgumentException("Password hash cannot be empty");
+
         this.id = id;
         this.name = name;
         this.email = email;
         this.passwordHash = passwordHash;
-
-        if (this.id >= current_id) {
-            current_id = this.id + 1;
-        }
     }
 
-    public static Integer nextId() {
-        return current_id++;
+    public UserId id() {
+        return id;
     }
 
-    public static User fromLine(String line) {
-        String[] parts = line.split(";");
-
-        if (parts.length != 4) {
-            throw new IllegalArgumentException("Invalid line : " + line);
-        }
-
-        return new User(
-                Integer.parseInt(parts[0]),
-                parts[1],
-                parts[2],
-                parts[3]
-        );
+    public String name() {
+        return name;
     }
 
-    public String toLine() {
-        return id + ";" + name + ";" + email + ";" + passwordHash;
+    public Email email() {
+        return email;
+    }
+
+    public String passwordHash() {
+        return passwordHash;
     }
 }

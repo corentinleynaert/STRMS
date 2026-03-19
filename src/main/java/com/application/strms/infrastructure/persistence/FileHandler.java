@@ -1,4 +1,4 @@
-package com.application.strms.utils;
+package com.application.strms.infrastructure.persistence;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.function.Function;
 
 public class FileHandler {
-    public static <T> List<T> load(String name, Function<String, T> mapper) {
+    public <T> List<T> load(String name, Function<String, T> mapper) {
         String path = "/data/" + name;
         InputStream is = FileHandler.class.getResourceAsStream(path);
 
@@ -17,8 +17,8 @@ public class FileHandler {
         }
 
         try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(is, StandardCharsets.UTF_8))
-        ) {
+                new InputStreamReader(is, StandardCharsets.UTF_8))) {
+
             return reader.lines()
                     .filter(line -> !line.isBlank())
                     .map(mapper)

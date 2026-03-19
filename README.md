@@ -22,20 +22,24 @@ This system simulates a real-world engineering workflow and emphasizes strong so
 
 ## 🏗️ Architecture
 
-This project follows a **layered architecture inspired by Clean Architecture / Domain-Driven Design (DDD)**.
+This project follows a **layered architecture inspired by Clean Architecture and Domain-Driven Design (DDD)**.
+
 ```
-app                → Application entry point
-domain             → Core business logic (models, services)
-infrastructure     → Data access (repositories, persistence)
-view               → JavaFX UI (controllers + FXML)
-utils              → Shared utilities (validation, hashing, etc.)
+app               → Application entry point (bootstrapping & dependency wiring)
+application       → Use cases (business orchestration, e.g. AuthService)
+domain            → Core business logic (entities, value objects, interfaces)
+infrastructure    → Technical implementations (file access, repositories, security)
+presentation      → JavaFX UI (controllers, view loaders)
 ```
 
 ### Key principles:
+
 - **Separation of concerns** between layers
 - **Domain is independent** from UI and infrastructure
-- **Clear responsibilities** for each component
-- **Scalable and maintainable structure**
+- **Dependency inversion** (domain defines interfaces, infrastructure implements them)
+- **Explicit use cases** through the application layer
+- **Encapsulation of business rules** inside domain models
+- **Clear and scalable structure**
 
 ---
 
@@ -54,18 +58,21 @@ utils              → Shared utilities (validation, hashing, etc.)
 ./mvnw javafx:run
 ```
 
+--- 
+
 ## 📌 Learning Objectives
 
 This project is designed to practice:
-- Object-Oriented Programming (encapsulation, inheritance, polymorphism, abstraction)
-- Clean architecture and project organization
-- File handling and data persistence
+- Object-Oriented Programming (encapsulation, abstraction, polymorphism)
+- Clean Architecture & Domain-Driven Design basics
+- Separation between domain, application, and infrastructure layers
+- File-based persistence
 - Exception handling
 - Use of Java collections (List, Map, Set, etc.)
-- Writing maintainable and testable code
+- Writing maintainable, testable, and scalable code
 
 ---
 
-## 👥 Team
+👥 Team
 
 Project developed as part of a university assignment.
