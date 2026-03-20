@@ -87,7 +87,7 @@ public class UpdateUserController extends BaseController {
 
     @FXML
     protected void goBack() {
-        navigator.goTo("Home");
+        navigator.goTo("Users");
     }
 
     @FXML

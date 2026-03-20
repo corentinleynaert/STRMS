@@ -15,11 +15,6 @@ public class AdminTopbarController extends BaseController {
     }
 
     @FXML
-    protected void goToAddUser() {
-        navigator.goTo("AddUser");
-    }
-
-    @FXML
     protected void logout() {
         context.getSessionManager().logout();
         navigator.goTo("Login");

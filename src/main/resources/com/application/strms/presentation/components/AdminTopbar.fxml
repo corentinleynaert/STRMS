@@ -33,13 +33,6 @@
                 </graphic>
             </Button>
 
-            <Button text="Add User" onAction="#goToAddUser" styleClass="topbar-action-button, add-user-button">
-                <graphic>
-                     <Region styleClass="icon-placeholder"/>
-                </graphic>
-            </Button>
-            
-
             <Button text="Logout" onAction="#logout" styleClass="topbar-nav-button, logout-button">
                 <graphic>
                      <Region styleClass="icon-placeholder"/>
