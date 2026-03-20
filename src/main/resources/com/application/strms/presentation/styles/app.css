@@ -195,3 +195,31 @@
     -fx-background-color: rgba(255, 255, 255, 0.08);
     -fx-text-fill: white;
 }
+
+.notification-container {
+    -fx-alignment: top-right;
+    -fx-padding: 30;
+    -fx-spacing: 15;
+}
+
+.notification {
+    -fx-background-color: rgba(255, 255, 255, 0.9); 
+    -fx-text-fill: #0f172a; 
+    
+    -fx-padding: 16 24;
+    -fx-background-radius: 20;
+    
+    -fx-border-color: rgba(255, 255, 255, 1);
+    -fx-border-radius: 20;
+    -fx-border-width: 0.5;
+    
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 30, 0, 0, 15);
+}
+
+.notification-success {
+    -fx-border-color: #34c759;
+    -fx-border-width: 2;
+}
