@@ -21,10 +21,14 @@ public class LoginController extends BaseController {
     private ApplicationContext context;
     private Navigator navigator;
 
-    @FXML private TextField email_field;
-    @FXML private PasswordField password_field;
-    @FXML private Label errors;
-    @FXML private Button login_button;
+    @FXML
+    private TextField email_field;
+    @FXML
+    private PasswordField password_field;
+    @FXML
+    private Label errors;
+    @FXML
+    private Button login_button;
 
     @Override
     public void setApplicationContext(ApplicationContext context) {

@@ -1,7 +1,7 @@
 package com.application.strms.domain.model;
 
 public class Engineer extends User {
-    public Engineer(UserId id, String name, Email email) {
+    public Engineer(Ulid id, String name, Email email) {
         super(id, name, email, "ENGINEER");
     }
     

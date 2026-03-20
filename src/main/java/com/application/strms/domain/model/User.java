@@ -1,12 +1,12 @@
 package com.application.strms.domain.model;
 
 public class User {
-    private final UserId id;
+    private final Ulid id;
     private final String name;
     private final Email email;
     private final String role;
 
-    public User(UserId id, String name, Email email, String role) {
+    public User(Ulid id, String name, Email email, String role) {
         if (id == null) { throw new IllegalArgumentException("Id cannot be null"); }
         if (name == null || name.isBlank()) { throw new IllegalArgumentException("Name cannot be empty"); }
         if (email == null) { throw new IllegalArgumentException("Email cannot be null"); }
@@ -19,10 +19,10 @@ public class User {
     }
 
     public User(String name, Email email, String role) {
-        this(new UserId(), name, email, role);
+        this(new Ulid(), name, email, role);
     }
 
-    public UserId getId() {
+    public Ulid getId() {
         return id;
     }
 

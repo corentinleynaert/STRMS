@@ -4,6 +4,8 @@ module com.application.strms {
 
     requires transitive javafx.graphics;
     requires transitive javafx.fxml;
+    requires de.huxhorn.sulky.ulid;
+    requires java.desktop;
 
     exports com.application.strms.app;
     exports com.application.strms.presentation.navigation;

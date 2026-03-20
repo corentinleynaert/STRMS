@@ -1,1 +1,2 @@
-0;Enzo;enzoblain@proton.me;$2a$10$FCZqipCnDLb7n6NwpZc8TOmlASgHowPBd4y7wilQoJnep99BDFdQm;ADMIN
+01HZX3Y8K9M7Q6R5T4V3W2X1YZ;Enzo;enzoblain@proton.me;$2a$10$FCZqipCnDLb7n6NwpZc8TOmlASgHowPBd4y7wilQoJnep99BDFdQm;ADMIN
+01KM5BMESMDMDEEXS2Y6VRJQRM;Pierre;pierregermanipro@gmail.com;$2a$10$g.0ShbkpysFjo0ZzVbJx/O9PRqEFDGXT0XKCGlWqVDuTW3r8sOhNq;MANAGER

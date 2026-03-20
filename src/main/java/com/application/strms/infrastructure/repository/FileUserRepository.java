@@ -1,16 +1,23 @@
 package com.application.strms.infrastructure.repository;
 
-import com.application.strms.domain.model.*;
+import com.application.strms.domain.model.Admin;
+import com.application.strms.domain.model.Email;
+import com.application.strms.domain.model.Engineer;
+import com.application.strms.domain.model.Manager;
+import com.application.strms.domain.model.Ulid;
+import com.application.strms.domain.model.User;
+import com.application.strms.domain.model.UserAuth;
 import com.application.strms.domain.repository.UserRepository;
 import com.application.strms.infrastructure.persistence.FileHandler;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class FileUserRepository implements UserRepository {
-    private final Map<Integer, User> users = new HashMap<>();
+    private final Map<Ulid, User> users = new HashMap<>();
     private final FileHandler fileHandler;
 
     public FileUserRepository(FileHandler fileHandler) throws IOException {
@@ -20,7 +27,7 @@ public class FileUserRepository implements UserRepository {
             List<User> loadedUsers = fileHandler.load("users.txt", this::mapLineToUser);
 
             for (User user : loadedUsers) {
-                users.put(user.getId().value(), user);
+                users.put(user.getId(), user);
             }
         } catch (IOException e) {
             throw new IOException("Failed to initialize user repository from file", e);
@@ -58,15 +65,15 @@ public class FileUserRepository implements UserRepository {
     @Override
     public void addUser(User user, UserAuth userAuth) throws IOException {
         try {
-            users.put(user.getId().value(), user);
+            users.put(user.getId(), user);
             fileHandler.save("users.txt", List.of(new UserLine(user, userAuth)), this::mapUserLineToString);
         } catch (IOException e) {
             throw new IOException("Failed to add user: " + user.getId(), e);
         }
     }
 
-    private User findById(UserId id) {
-        return users.get(id.value());
+    private User findById(Ulid id) {
+        return users.get(id);
     }
 
     private User mapLineToUser(String line) {
@@ -76,7 +83,7 @@ public class FileUserRepository implements UserRepository {
             throw new IllegalArgumentException("Invalid line: " + line);
         }
 
-        UserId id = new UserId(Integer.parseInt(parts[0]));
+        Ulid id = Ulid.fromString(parts[0]);
         String name = parts[1];
         Email email = new Email(parts[2]);
         String role = parts[4].toUpperCase();
@@ -91,7 +98,7 @@ public class FileUserRepository implements UserRepository {
             throw new IllegalArgumentException("Invalid line: " + line);
         }
 
-        UserId id = new UserId(Integer.parseInt(parts[0]));
+        Ulid id = Ulid.fromString(parts[0]);
         String passwordHash = parts[3];
 
         return new UserAuth(id, passwordHash);
@@ -101,14 +108,14 @@ public class FileUserRepository implements UserRepository {
         User user = userLine.user();
         UserAuth auth = userLine.auth();
 
-        return user.getId().value() + ";" +
+        return user.getId().toString() + ";" +
                 user.getName() + ";" +
                 user.getEmail() + ";" +
                 auth.getPasswordHash() + ";" +
                 user.getRole();
     }
 
-    private User createUserByRole(UserId id, String name, Email email, String role) {
+    private User createUserByRole(Ulid id, String name, Email email, String role) {
         return switch (role) {
             case "ADMIN" -> new Admin(id, name, email);
             case "MANAGER" -> new Manager(id, name, email);
