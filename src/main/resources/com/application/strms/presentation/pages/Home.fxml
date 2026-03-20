@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" spacing="20.0"
+<VBox alignment="TOP_LEFT" spacing="0"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.application.strms.presentation.controller.pages.HomeController">
+      fx:controller="com.application.strms.presentation.controller.pages.HomeController"
+      styleClass="page-root">
 
-    <Label fx:id="welcomeLabel"
-           text="Welcome"
-           style="-fx-font-size: 20px; -fx-font-weight: bold;" />
+    <VBox spacing="12" styleClass="home-header">
+        <padding>
+            <Insets top="48" left="48" right="48" bottom="32"/>
+        </padding>
+        <Label text="Welcome Back" styleClass="page-title"/>
+        <Label fx:id="welcomeLabel" 
+               text="Welcome to STRMS" 
+               styleClass="page-subtitle"/>
+    </VBox>
 </VBox>

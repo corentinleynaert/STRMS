@@ -11,18 +11,18 @@
            fx:controller="com.application.strms.presentation.controller.pages.LoginController"
            styleClass="page-root">
 
-    <VBox alignment="CENTER" spacing="30.0" styleClass="card login-card">
+    <VBox alignment="CENTER" spacing="28" styleClass="card login-card">
         <padding>
-            <Insets bottom="50.0" left="40.0" right="40.0" top="50.0"/>
+            <Insets bottom="56" left="56" right="56" top="56"/>
         </padding>
 
-        <VBox alignment="CENTER" spacing="8">
-            <Label text="STRMS" styleClass="page-title"/>
-            <Label text="Welcome back." styleClass="page-subtitle"/>
+        <VBox alignment="CENTER" spacing="12">
+            <Label text="Welcome to STRMS" styleClass="page-title"/>
+            <Label text="Sign in to your account" styleClass="page-subtitle"/>
         </VBox>
 
-        <VBox spacing="15">
-            <TextField fx:id="emailField" promptText="Email" styleClass="input-field"/>
+        <VBox spacing="16">
+            <TextField fx:id="emailField" promptText="Email address" styleClass="input-field"/>
             <PasswordField fx:id="passwordField" promptText="Password" styleClass="input-field"/>
         </VBox>
 
@@ -33,12 +33,10 @@
                visible="false"/>
 
         <Button fx:id="loginButton"
-                text="Continue"
+                text="Sign in"
                 onAction="#login"
                 disable="true"
                 maxWidth="Infinity"
                 styleClass="primary-button"/>
-
-        <Label text="Forgot password?" styleClass="subtle-link"/>
     </VBox>
 </StackPane>

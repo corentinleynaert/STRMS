@@ -7,6 +7,7 @@ import com.application.strms.application.service.AuthService;
 import com.application.strms.domain.model.User;
 import com.application.strms.domain.repository.UserRepository;
 import com.application.strms.presentation.controller.BaseController;
+import com.application.strms.presentation.model.UserDisplay;
 import com.application.strms.presentation.service.UiConstants;
 import com.application.strms.presentation.service.UiUtils;
 import javafx.fxml.FXML;
@@ -20,7 +21,7 @@ import javafx.scene.layout.HBox;
 
 public class UsersController extends BaseController {
     @FXML
-    private TableView<User> usersTable;
+    private TableView<UserDisplay> usersTable;
     @FXML
     private Button addUserButton;
     @FXML
@@ -56,7 +57,9 @@ public class UsersController extends BaseController {
             if (users == null || users.isEmpty()) {
                 showEmptyState();
             } else {
-                usersTable.getItems().addAll(users);
+                users.stream()
+                        .map(UserDisplay::new)
+                        .forEach(userDisplay -> usersTable.getItems().add(userDisplay));
                 UiUtils.setVisibility(usersTable, true);
                 UiUtils.setVisibility(emptyStateLabel, false);
             }
@@ -72,9 +75,9 @@ public class UsersController extends BaseController {
 
     @FXML
     protected void handleEdit() {
-        User selectedUser = usersTable.getSelectionModel().getSelectedItem();
-        if (selectedUser != null) {
-            navigateToUpdateUser(selectedUser);
+        UserDisplay selectedUserDisplay = usersTable.getSelectionModel().getSelectedItem();
+        if (selectedUserDisplay != null) {
+            navigateToUpdateUser(selectedUserDisplay.getUser());
         }
     }
 
@@ -101,17 +104,17 @@ public class UsersController extends BaseController {
     }
 
     private void addDeleteButtonColumn() {
-        TableColumn<User, Void> deleteColumn = new TableColumn<>("Actions");
+        TableColumn<UserDisplay, Void> deleteColumn = new TableColumn<>("Actions");
         deleteColumn.setPrefWidth(100);
         deleteColumn.setCellFactory(param -> new TableCell<>() {
             private final Button deleteButton = new Button("Delete");
 
             {
-                deleteButton.setStyle("-fx-padding: 5px 15px; -fx-font-size: 12px;");
+                deleteButton.getStyleClass().add("delete-button");
                 deleteButton.setOnAction(event -> {
-                    User user = getTableView().getItems().get(getIndex());
-                    if (user != null) {
-                        handleDelete(user);
+                    UserDisplay userDisplay = getTableView().getItems().get(getIndex());
+                    if (userDisplay != null) {
+                        handleDelete(userDisplay.getUser());
                     }
                 });
             }

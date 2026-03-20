@@ -28,6 +28,7 @@ module com.application.strms {
     opens com.application.strms.app to javafx.fxml;
     opens com.application.strms.application to javafx.fxml;
     opens com.application.strms.application.session to javafx.fxml;
+    opens com.application.strms.presentation.model to javafx.base;
     opens com.application.strms.presentation.controller to javafx.fxml;
     opens com.application.strms.presentation.controller.components to javafx.fxml;
     opens com.application.strms.presentation.controller.pages to javafx.fxml;
