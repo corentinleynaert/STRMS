@@ -27,6 +27,12 @@
 
     <right>
         <HBox alignment="CENTER_RIGHT" spacing="15" styleClass="topbar-right">
+            <Button text="Users" onAction="#goToUsers" styleClass="topbar-action-button, add-user-button">
+                <graphic>
+                     <Region styleClass="icon-placeholder"/>
+                </graphic>
+            </Button>
+
             <Button text="Add User" onAction="#goToAddUser" styleClass="topbar-action-button, add-user-button">
                 <graphic>
                      <Region styleClass="icon-placeholder"/>

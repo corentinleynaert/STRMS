@@ -42,4 +42,20 @@ public class FileHandler {
             throw new IOException("Error while writing file: " + path, e);
         }
     }
+
+    public <T> void replaceAll(String name, List<T> data, Function<T, String> mapper) throws IOException {
+        String path = "src/main/resources/com/application/strms/data/" + name;
+
+        try (BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(path, false), StandardCharsets.UTF_8))) {
+
+            for (T element : data) {
+                writer.write(mapper.apply(element));
+                writer.newLine();
+            }
+
+        } catch (IOException e) {
+            throw new IOException("Error while replacing file content: " + path, e);
+        }
+    }
 }
