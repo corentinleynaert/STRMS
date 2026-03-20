@@ -198,8 +198,10 @@
 
 .notification-container {
     -fx-alignment: top-right;
-    -fx-padding: 30;
+    -fx-padding: 75 30 30 30; 
     -fx-spacing: 15;
+    -fx-mouse-transparent: false; 
+    -fx-pick-on-bounds: false;
 }
 
 .notification {
