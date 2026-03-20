@@ -113,6 +113,29 @@ public class FileUserRepository implements UserRepository {
         return users.values().stream().toList();
     }
 
+    @Override
+    public void deleteUser(Ulid id) throws IOException {
+        try {
+            User userToDelete = users.get(id);
+
+            if (userToDelete == null) {
+                throw new IllegalArgumentException("User not found: " + id);
+            }
+
+            users.remove(id);
+
+            List<UserAuth> auths = fileHandler.load("users.txt", this::mapLineToUserAuth);
+            List<UserLine> updatedLines = auths.stream()
+                    .filter(auth -> !auth.getId().equals(id))
+                    .map(auth -> new UserLine(users.get(auth.getId()), auth))
+                    .toList();
+
+            fileHandler.replaceAll("users.txt", updatedLines, this::mapUserLineToString);
+        } catch (IOException e) {
+            throw new IOException("Failed to delete user: " + id, e);
+        }
+    }
+
     private User mapLineToUser(String line) {
         String[] parts = line.split(";");
 

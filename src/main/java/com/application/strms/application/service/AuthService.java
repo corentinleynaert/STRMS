@@ -1,6 +1,7 @@
 package com.application.strms.application.service;
 
 import com.application.strms.application.result.AddUserResult;
+import com.application.strms.application.result.DeleteUserResult;
 import com.application.strms.application.result.LoginResult;
 import com.application.strms.application.result.UpdateUserResult;
 import com.application.strms.domain.exception.DuplicateEmailException;
@@ -128,6 +129,26 @@ public class AuthService {
             throw new IOException("Error accessing user repository while editing user", e);
         } catch (Exception e) {
             return UpdateUserResult.failure(e.getMessage());
+        }
+    }
+
+    public DeleteUserResult deleteUser(User currentUser, Ulid userId) throws IOException {
+        validateManageUsersPermission(currentUser);
+
+        try {
+            User userToDelete = userRepository.findById(userId);
+
+            if (userToDelete == null) {
+                throw new UserNotFoundException("User not found");
+            }
+
+            userRepository.deleteUser(userId);
+
+            return DeleteUserResult.success();
+        } catch (IOException e) {
+            throw new IOException("Error accessing user repository while deleting user", e);
+        } catch (Exception e) {
+            return DeleteUserResult.failure(e.getMessage());
         }
     }
 

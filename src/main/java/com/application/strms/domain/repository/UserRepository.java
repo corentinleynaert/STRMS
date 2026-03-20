@@ -18,5 +18,7 @@ public interface UserRepository {
 
     void updateUser(User user, UserAuth userAuth) throws IOException;
 
+    void deleteUser(Ulid id) throws IOException;
+
     List<User> getAllUsers();
 }
