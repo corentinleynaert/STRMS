@@ -3,9 +3,14 @@ package com.application.strms.application.service;
 import com.application.strms.application.result.AddUserResult;
 import com.application.strms.application.result.LoginResult;
 import com.application.strms.application.result.UpdateUserResult;
+import com.application.strms.domain.exception.DuplicateEmailException;
+import com.application.strms.domain.exception.InsufficientPermissionsException;
+import com.application.strms.domain.exception.InvalidUserInputException;
+import com.application.strms.domain.exception.UserNotFoundException;
 import com.application.strms.domain.model.*;
 import com.application.strms.domain.repository.UserRepository;
 import com.application.strms.domain.service.PasswordHasher;
+
 import java.io.IOException;
 
 public class AuthService {
@@ -53,12 +58,10 @@ public class AuthService {
 
     public AddUserResult addUser(User currentUser, String name, String emailRaw, String passwordRaw, String role)
             throws IOException {
+        validateManageUsersPermission(currentUser);
+
         Email email;
         Password password;
-
-        if (!currentUser.isAdmin()) {
-            return AddUserResult.failure("Insufficient permissions");
-        }
 
         try {
             email = new Email(emailRaw);
@@ -69,18 +72,11 @@ public class AuthService {
 
         try {
             if (userRepository.findByEmail(email) != null) {
-                return AddUserResult.failure("User with email " + email + " already exists");
+                throw new DuplicateEmailException("User with email " + email + " already exists");
             }
 
             String passwordHashed = this.passwordHasher.hash(password);
-
-            User newUser = switch (role) {
-                case "ADMIN" -> new Admin(name, email);
-                case "MANAGER" -> new Manager(name, email);
-                case "ENGINEER" -> new Engineer(name, email);
-                default -> throw new IllegalArgumentException("Unknown role: " + role);
-            };
-
+            User newUser = createUserByRole(name, email, role);
             UserAuth userAuth = new UserAuth(newUser.getId(), passwordHashed);
 
             this.userRepository.addUser(newUser, userAuth);
@@ -96,9 +92,7 @@ public class AuthService {
     public UpdateUserResult editUser(User currentUser, Ulid userId, String name, String emailRaw, String role,
             String passwordRaw)
             throws IOException {
-        if (currentUser == null || !currentUser.isAdmin()) {
-            return UpdateUserResult.failure("Insufficient permissions");
-        }
+        validateManageUsersPermission(currentUser);
 
         Email email;
         Password password;
@@ -114,20 +108,15 @@ public class AuthService {
             User existingUser = userRepository.findById(userId);
 
             if (existingUser == null) {
-                return UpdateUserResult.failure("User not found");
+                throw new UserNotFoundException("User not found");
             }
 
             User userWithSameEmail = userRepository.findByEmail(email);
             if (userWithSameEmail != null && !userWithSameEmail.getId().equals(userId)) {
-                return UpdateUserResult.failure("User with email " + email + " already exists");
+                throw new DuplicateEmailException("User with email " + email + " already exists");
             }
 
-            User updatedUser = switch (role.toUpperCase()) {
-                case "ADMIN" -> new Admin(userId, name, email);
-                case "MANAGER" -> new Manager(userId, name, email);
-                case "ENGINEER" -> new Engineer(userId, name, email);
-                default -> throw new IllegalArgumentException("Unknown role: " + role);
-            };
+            User updatedUser = createUserByRole(userId, name, email, role);
 
             String passwordHashed = this.passwordHasher.hash(password);
             UserAuth updatedAuth = new UserAuth(userId, passwordHashed);
@@ -140,5 +129,30 @@ public class AuthService {
         } catch (Exception e) {
             return UpdateUserResult.failure(e.getMessage());
         }
+    }
+
+    private void validateManageUsersPermission(User currentUser) {
+        if (currentUser == null || !currentUser.getRole().canManageUsers()) {
+            throw new InsufficientPermissionsException("Insufficient permissions");
+        }
+    }
+
+    private User createUserByRole(String name, Email email, String role) {
+        return createUserByRole(new Ulid(), name, email, role);
+    }
+
+    private User createUserByRole(Ulid userId, String name, Email email, String role) {
+        UserRole userRole = UserRoleFactory.createFromIdentifier(role);
+        return instantiateUserByRole(userId, name, email, userRole);
+    }
+
+    private User instantiateUserByRole(Ulid id, String name, Email email, UserRole role) {
+        String roleId = role.getIdentifier();
+        return switch (roleId) {
+            case "ADMIN" -> new Admin(id, name, email);
+            case "MANAGER" -> new Manager(id, name, email);
+            case "ENGINEER" -> new Engineer(id, name, email);
+            default -> throw new InvalidUserInputException("Unknown role: " + roleId);
+        };
     }
 }

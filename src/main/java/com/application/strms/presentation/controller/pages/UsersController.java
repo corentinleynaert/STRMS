@@ -13,10 +13,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 
 public class UsersController extends BaseController {
-    @FXML private TableView<User> usersTable;
-    @FXML private Button addUserButton;
-    @FXML private Button editButton;
-    @FXML private Label emptyStateLabel;
+    @FXML
+    private TableView<User> usersTable;
+    @FXML
+    private Button addUserButton;
+    @FXML
+    private Button editButton;
+    @FXML
+    private Label emptyStateLabel;
 
     @FXML
     public void initialize() {
@@ -29,7 +33,7 @@ public class UsersController extends BaseController {
     protected void onReady() {
         if (context != null && context.getSessionManager().isAuthenticated()) {
             User currentUser = context.getSessionManager().getCurrentUser();
-            if (currentUser.isAdmin()) {
+            if (currentUser.getRole().canManageUsers()) {
                 UiUtils.setVisibility(addUserButton, true);
             }
             loadUsers();

@@ -1,25 +1,28 @@
 package com.application.strms.domain.model;
 
-public class User {
+public abstract class User {
     private final Ulid id;
     private final String name;
     private final Email email;
-    private final String role;
 
-    public User(Ulid id, String name, Email email, String role) {
-        if (id == null) { throw new IllegalArgumentException("Id cannot be null"); }
-        if (name == null || name.isBlank()) { throw new IllegalArgumentException("Name cannot be empty"); }
-        if (email == null) { throw new IllegalArgumentException("Email cannot be null"); }
-        if (role == null || role.isBlank()) { throw new IllegalArgumentException("Role cannot be empty"); }
+    protected User(Ulid id, String name, Email email) {
+        if (id == null) {
+            throw new IllegalArgumentException("Id cannot be null");
+        }
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
+        if (email == null) {
+            throw new IllegalArgumentException("Email cannot be null");
+        }
 
         this.id = id;
         this.name = name;
         this.email = email;
-        this.role = role;
     }
 
-    public User(String name, Email email, String role) {
-        this(new Ulid(), name, email, role);
+    protected User(String name, Email email) {
+        this(new Ulid(), name, email);
     }
 
     public Ulid getId() {
@@ -34,19 +37,5 @@ public class User {
         return email;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public boolean isAdmin() {
-        return this instanceof Admin;
-    }
-
-    public boolean isEngineer() {
-        return this instanceof Engineer;
-    }
-
-    public boolean isManager() {
-        return this instanceof Manager;
-    }
+    public abstract UserRole getRole();
 }

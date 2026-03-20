@@ -7,6 +7,8 @@ import com.application.strms.domain.model.Manager;
 import com.application.strms.domain.model.Ulid;
 import com.application.strms.domain.model.User;
 import com.application.strms.domain.model.UserAuth;
+import com.application.strms.domain.model.UserRole;
+import com.application.strms.domain.model.UserRoleFactory;
 import com.application.strms.domain.repository.UserRepository;
 import com.application.strms.infrastructure.persistence.FileHandler;
 
@@ -147,15 +149,21 @@ public class FileUserRepository implements UserRepository {
                 user.getName() + ";" +
                 user.getEmail() + ";" +
                 auth.getPasswordHash() + ";" +
-                user.getRole();
+                user.getRole().getIdentifier();
     }
 
     private User createUserByRole(Ulid id, String name, Email email, String role) {
-        return switch (role) {
+        UserRole userRole = UserRoleFactory.createFromIdentifier(role);
+        return instantiateUserByRole(id, name, email, userRole);
+    }
+
+    private User instantiateUserByRole(Ulid id, String name, Email email, UserRole role) {
+        String roleId = role.getIdentifier();
+        return switch (roleId) {
             case "ADMIN" -> new Admin(id, name, email);
             case "MANAGER" -> new Manager(id, name, email);
             case "ENGINEER" -> new Engineer(id, name, email);
-            default -> throw new IllegalArgumentException("Unknown role: " + role);
+            default -> throw new IllegalArgumentException("Unknown role: " + roleId);
         };
     }
 

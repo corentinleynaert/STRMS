@@ -27,7 +27,7 @@ public class LayoutController extends BaseController {
 
     @FXML private AdminTopbarController adminTopbarController;
     @FXML private ManagerTopbarController managerTopbarController;
-    @FXML  private EngineerTopbarController engineerTopbarController;
+    @FXML private EngineerTopbarController engineerTopbarController;
 
     @Override
     protected void onReady() {
@@ -62,13 +62,12 @@ public class LayoutController extends BaseController {
 
         UiUtils.setVisibility(topbarContainerWrapper, true);
         User currentUser = context.getSessionManager().getCurrentUser();
+        String roleIdentifier = currentUser.getRole().getIdentifier();
 
-        if (currentUser.isAdmin()) {
-            UiUtils.setVisibility(adminTopbar, true);
-        } else if (currentUser.isManager()) {
-            UiUtils.setVisibility(managerTopbar, true);
-        } else if (currentUser.isEngineer()) {
-            UiUtils.setVisibility(engineerTopbar, true);
+        switch (roleIdentifier) {
+            case "ADMIN" -> UiUtils.setVisibility(adminTopbar, true);
+            case "MANAGER" -> UiUtils.setVisibility(managerTopbar, true);
+            case "ENGINEER" -> UiUtils.setVisibility(engineerTopbar, true);
         }
     }
 

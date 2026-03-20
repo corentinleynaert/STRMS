@@ -2,9 +2,15 @@ package com.application.strms.domain.model;
 
 public class Manager extends User {
     public Manager(Ulid id, String name, Email email) {
-        super(id, name, email, "MANAGER");
+        super(id, name, email);
     }
+
     public Manager(String name, Email email) {
-        super(name, email, "MANAGER");
+        super(name, email);
+    }
+
+    @Override
+    public UserRole getRole() {
+        return UserRoleFactory.createManager();
     }
 }

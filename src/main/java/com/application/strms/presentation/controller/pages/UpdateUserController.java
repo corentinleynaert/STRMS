@@ -18,12 +18,18 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 public class UpdateUserController extends BaseController {
-    @FXML private TextField nameField;
-    @FXML private TextField emailField;
-    @FXML private PasswordField passwordField;
-    @FXML private Label errorLabel;
-    @FXML private ChoiceBox<String> roleChoiceBox;
-    @FXML private Button updateUserButton;
+    @FXML
+    private TextField nameField;
+    @FXML
+    private TextField emailField;
+    @FXML
+    private PasswordField passwordField;
+    @FXML
+    private Label errorLabel;
+    @FXML
+    private ChoiceBox<String> roleChoiceBox;
+    @FXML
+    private Button updateUserButton;
 
     private User userToUpdate;
 
@@ -67,7 +73,7 @@ public class UpdateUserController extends BaseController {
     private void populateFields(User user) {
         nameField.setText(user.getName());
         emailField.setText(user.getEmail().toString());
-        roleChoiceBox.setValue(user.getRole());
+        roleChoiceBox.setValue(user.getRole().getIdentifier());
         passwordField.clear();
     }
 
