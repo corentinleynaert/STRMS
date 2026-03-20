@@ -1,4 +1,4 @@
-package Class;
+package com.application.strms.domain.model;
 
 import java.util.ArrayList;
 
@@ -52,11 +52,11 @@ public class Task {
 		this.description = description;
 	}
 
-	public ArrayList<Engineer> getEngineer_assigned() {
+	public ArrayList<Engineer> getAssignedUser() {
 		return engineer_assigned;
 	}
 
-	public void setEngineer_assigned(ArrayList<Engineer> engineer_assigned) {
+	public void setAssignedUser(ArrayList<Engineer> engineer_assigned) {
 		this.engineer_assigned = engineer_assigned;
 	}
 
@@ -115,4 +115,5 @@ public class Task {
 	public void addHistory(TaskHistoryEntry newEntry) {
 		this.history.add(newEntry);
 	}
+	
 }

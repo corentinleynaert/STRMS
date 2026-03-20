@@ -1,4 +1,4 @@
-package Class;
+package com.application.strms.domain.model;
 
 import java.security.Timestamp;
 
