@@ -1,22 +1,21 @@
 package com.application.strms.presentation.controller.components;
 
-import com.application.strms.presentation.controller.BaseController;
+import com.application.strms.presentation.service.UiConstants;
 import javafx.fxml.FXML;
 
-public class AdminTopbarController extends BaseController {
+public class AdminTopbarController extends TopbarController {
     @FXML
     protected void goToHome() {
-        navigator.goTo("Home");
+        navigateHome();
     }
 
     @FXML
     protected void goToUsers() {
-        navigator.goTo("Users");
+        navigator.goTo(UiConstants.Pages.USERS);
     }
 
     @FXML
     protected void logout() {
-        context.getSessionManager().logout();
-        navigator.goTo("Login");
+        super.logout();
     }
 }

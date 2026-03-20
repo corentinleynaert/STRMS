@@ -2,10 +2,9 @@ package com.application.strms.presentation.controller.pages;
 
 import java.io.IOException;
 
-import com.application.strms.application.result.UpdateUserResult;
+import com.application.strms.application.result.AddUserResult;
 import com.application.strms.application.service.AuthService;
 import com.application.strms.application.session.SessionManager;
-import com.application.strms.domain.model.User;
 import com.application.strms.presentation.controller.BaseController;
 import com.application.strms.presentation.service.InputValidator;
 import com.application.strms.presentation.service.UiConstants;
@@ -17,15 +16,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-public class UpdateUserController extends BaseController {
+public class AddUserController extends BaseController {
     @FXML private TextField nameField;
     @FXML private TextField emailField;
     @FXML private PasswordField passwordField;
     @FXML private Label errorLabel;
     @FXML private ChoiceBox<String> roleChoiceBox;
-    @FXML private Button updateUserButton;
-
-    private User userToUpdate;
+    @FXML private Button addUserButton;
 
     @FXML
     public void initialize() {
@@ -33,56 +30,19 @@ public class UpdateUserController extends BaseController {
                 UiConstants.Roles.ADMIN,
                 UiConstants.Roles.MANAGER,
                 UiConstants.Roles.ENGINEER);
+        roleChoiceBox.setValue(UiConstants.Roles.ENGINEER);
 
-        InputValidator.enableDisableButtonOnValidation(updateUserButton, roleChoiceBox, nameField, emailField,
-                passwordField);
-        UiUtils.addButtonHoverEffect(updateUserButton);
-
-        UiUtils.addSelectAllOnFocus(nameField);
-        UiUtils.addSelectAllOnFocus(emailField);
-        UiUtils.addSelectAllOnFocus(passwordField);
-    }
-
-    @Override
-    protected void onReady() {
-        if (context != null && context.getSessionManager().isAuthenticated()) {
-            loadUserData();
-        }
-    }
-
-    private void loadUserData() {
-        this.userToUpdate = context.getSessionManager().getCurrentUser();
-        if (userToUpdate != null) {
-            populateFields(userToUpdate);
-        }
-    }
-
-    public void setUserToUpdate(User user) {
-        this.userToUpdate = user;
-        if (userToUpdate != null) {
-            populateFields(userToUpdate);
-        }
-    }
-
-    private void populateFields(User user) {
-        nameField.setText(user.getName());
-        emailField.setText(user.getEmail().toString());
-        roleChoiceBox.setValue(user.getRole());
-        passwordField.clear();
+        InputValidator.enableDisableButtonOnValidation(addUserButton, roleChoiceBox, nameField, emailField, passwordField);
+        UiUtils.addButtonHoverEffect(addUserButton);
     }
 
     @FXML
     protected void goBack() {
-        navigator.goTo(UiConstants.Pages.USERS);
+        navigator.goTo(UiConstants.Pages.HOME);
     }
 
     @FXML
-    protected void updateUser() {
-        if (userToUpdate == null) {
-            UiUtils.showError(errorLabel, UiConstants.Messages.NO_USER_SELECTED);
-            return;
-        }
-
+    protected void addUser() {
         AuthService authService = context.getAuthService();
         SessionManager sessionManager = context.getSessionManager();
 
@@ -92,16 +52,15 @@ public class UpdateUserController extends BaseController {
         String role = roleChoiceBox.getValue();
 
         try {
-            UpdateUserResult result = authService.editUser(
+            AddUserResult result = authService.addUser(
                     sessionManager.getCurrentUser(),
-                    userToUpdate.getId(),
                     name,
                     email,
-                    role,
-                    password);
+                    password,
+                    role);
 
             if (result.isSuccess()) {
-                navigator.notify(UiConstants.Messages.USER_UPDATED);
+                navigator.notify(UiConstants.Messages.USER_CREATED);
                 navigator.goTo(UiConstants.Pages.HOME);
             } else {
                 UiUtils.showError(errorLabel, result.toString());

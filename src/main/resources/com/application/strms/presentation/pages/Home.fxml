@@ -7,7 +7,7 @@
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.application.strms.presentation.controller.pages.HomeController">
 
-    <Label fx:id="welcome_label"
+    <Label fx:id="welcomeLabel"
            text="Welcome"
            style="-fx-font-size: 20px; -fx-font-weight: bold;" />
 </VBox>

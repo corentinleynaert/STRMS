@@ -5,12 +5,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 public class HomeController extends BaseController {
-    @FXML  private Label welcome_label;
+    @FXML private Label welcomeLabel;
 
     @Override
     protected void onReady() {
         if (context.getSessionManager().isAuthenticated()) {
-            welcome_label.setText("Welcome, " + context.getSessionManager().getCurrentUser().getName());
+            String userName = context.getSessionManager().getCurrentUser().getName();
+            welcomeLabel.setText("Welcome, " + userName);
         }
     }
 }

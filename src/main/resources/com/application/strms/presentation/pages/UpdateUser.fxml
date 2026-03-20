@@ -23,20 +23,20 @@
         </VBox>
 
         <VBox spacing="15">
-            <TextField fx:id="name_field" promptText="Name" styleClass="input-field"/>
-            <TextField fx:id="email_field" promptText="Email" styleClass="input-field"/>
-            <PasswordField fx:id="password_field" promptText="New Password" styleClass="input-field"/>
-            <ChoiceBox fx:id="role_choice" maxWidth="Infinity" styleClass="role-choice"/>
+            <TextField fx:id="nameField" promptText="Name" styleClass="input-field"/>
+            <TextField fx:id="emailField" promptText="Email" styleClass="input-field"/>
+            <PasswordField fx:id="passwordField" promptText="New Password" styleClass="input-field"/>
+            <ChoiceBox fx:id="roleChoiceBox" maxWidth="Infinity" styleClass="role-choice"/>
         </VBox>
 
-        <Label fx:id="errors"
+        <Label fx:id="errorLabel"
                text="Unable to update user"
                styleClass="error-label"
                managed="false"
                visible="false"/>
 
         <VBox spacing="12">
-            <Button fx:id="update_user_button"
+            <Button fx:id="updateUserButton"
                     text="Update user"
                     onAction="#updateUser"
                     maxWidth="Infinity"

@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml"
-           fx:controller="com.application.strms.presentation.controller.pages.AddUser"
+           fx:controller="com.application.strms.presentation.controller.pages.AddUserController"
            styleClass="page-root">
 
     <VBox alignment="CENTER" spacing="30.0" styleClass="card add-user-card">
@@ -23,20 +23,20 @@
         </VBox>
 
         <VBox spacing="15">
-            <TextField fx:id="name_field" promptText="Name" styleClass="input-field"/>
-            <TextField fx:id="email_field" promptText="Email" styleClass="input-field"/>
-            <PasswordField fx:id="password_field" promptText="Password" styleClass="input-field"/>
-            <ChoiceBox fx:id="role_choice" maxWidth="Infinity" styleClass="role-choice"/>
+            <TextField fx:id="nameField" promptText="Name" styleClass="input-field"/>
+            <TextField fx:id="emailField" promptText="Email" styleClass="input-field"/>
+            <PasswordField fx:id="passwordField" promptText="Password" styleClass="input-field"/>
+            <ChoiceBox fx:id="roleChoiceBox" maxWidth="Infinity" styleClass="role-choice"/>
         </VBox>
 
-        <Label fx:id="errors"
+        <Label fx:id="errorLabel"
                text="Unable to create user"
                styleClass="error-label"
                managed="false"
                visible="false"/>
 
         <VBox spacing="12">
-            <Button fx:id="add_user_button"
+            <Button fx:id="addUserButton"
                     text="Create user"
                     onAction="#addUser"
                     maxWidth="Infinity"

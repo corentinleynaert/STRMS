@@ -4,6 +4,8 @@ import com.application.strms.domain.model.User;
 import com.application.strms.presentation.controller.components.AdminTopbarController;
 import com.application.strms.presentation.controller.components.EngineerTopbarController;
 import com.application.strms.presentation.controller.components.ManagerTopbarController;
+import com.application.strms.presentation.service.UiConstants;
+import com.application.strms.presentation.service.UiUtils;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
@@ -16,7 +18,6 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 public class LayoutController extends BaseController {
-
     @FXML private StackPane topbarContainerWrapper;
     @FXML private BorderPane adminTopbar;
     @FXML private BorderPane managerTopbar;
@@ -26,7 +27,7 @@ public class LayoutController extends BaseController {
 
     @FXML private AdminTopbarController adminTopbarController;
     @FXML private ManagerTopbarController managerTopbarController;
-    @FXML private EngineerTopbarController engineerTopbarController;
+    @FXML  private EngineerTopbarController engineerTopbarController;
 
     @Override
     protected void onReady() {
@@ -35,19 +36,15 @@ public class LayoutController extends BaseController {
     }
 
     private void injectChildrenDependencies() {
-        if (adminTopbarController != null) {
-            adminTopbarController.setApplicationContext(context);
-            adminTopbarController.setNavigator(navigator);
-        }
-
-        if (managerTopbarController != null) {
-            managerTopbarController.setApplicationContext(context);
-            managerTopbarController.setNavigator(navigator);
-        }
-
-        if (engineerTopbarController != null) {
-            engineerTopbarController.setApplicationContext(context);
-            engineerTopbarController.setNavigator(navigator);
+        for (BaseController topbarController : new BaseController[] {
+                adminTopbarController,
+                managerTopbarController,
+                engineerTopbarController
+        }) {
+            if (topbarController != null) {
+                topbarController.setApplicationContext(context);
+                topbarController.setNavigator(navigator);
+            }
         }
     }
 
@@ -56,52 +53,50 @@ public class LayoutController extends BaseController {
     }
 
     public void updateTopbar() {
-        adminTopbar.setVisible(false);
-        adminTopbar.setManaged(false);
-
-        managerTopbar.setVisible(false);
-        managerTopbar.setManaged(false);
-
-        engineerTopbar.setVisible(false);
-        engineerTopbar.setManaged(false);
+        hideAllTopbars();
 
         if (context == null || !context.getSessionManager().isAuthenticated()) {
-            topbarContainerWrapper.setVisible(false);
-            topbarContainerWrapper.setManaged(false);
+            UiUtils.setVisibility(topbarContainerWrapper, false);
             return;
         }
 
-        topbarContainerWrapper.setVisible(true);
-        topbarContainerWrapper.setManaged(true);
-
+        UiUtils.setVisibility(topbarContainerWrapper, true);
         User currentUser = context.getSessionManager().getCurrentUser();
 
         if (currentUser.isAdmin()) {
-            adminTopbar.setVisible(true);
-            adminTopbar.setManaged(true);
+            UiUtils.setVisibility(adminTopbar, true);
         } else if (currentUser.isManager()) {
-            managerTopbar.setVisible(true);
-            managerTopbar.setManaged(true);
+            UiUtils.setVisibility(managerTopbar, true);
         } else if (currentUser.isEngineer()) {
-            engineerTopbar.setVisible(true);
-            engineerTopbar.setManaged(true);
+            UiUtils.setVisibility(engineerTopbar, true);
         }
+    }
+
+    private void hideAllTopbars() {
+        UiUtils.setVisibility(adminTopbar, false);
+        UiUtils.setVisibility(managerTopbar, false);
+        UiUtils.setVisibility(engineerTopbar, false);
     }
 
     public void showNotification(String message) {
         Label notification = new Label(message);
-        notification.getStyleClass().add("notification");
+        notification.getStyleClass().add(UiConstants.Styles.NOTIFICATION);
         notification.setOpacity(0);
 
         notificationContainer.getChildren().add(notification);
 
-        FadeTransition fadeIn = new FadeTransition(Duration.millis(200), notification);
+        FadeTransition fadeIn = new FadeTransition(
+                Duration.millis(UiConstants.Animations.FADE_TRANSITION_MS),
+                notification);
         fadeIn.setFromValue(0);
         fadeIn.setToValue(1);
 
-        PauseTransition stay = new PauseTransition(Duration.seconds(2.5));
+        PauseTransition stay = new PauseTransition(
+                Duration.millis(UiConstants.Animations.PAUSE_BEFORE_REMOVE_MS));
 
-        FadeTransition fadeOut = new FadeTransition(Duration.millis(300), notification);
+        FadeTransition fadeOut = new FadeTransition(
+                Duration.millis(UiConstants.Animations.FADE_TRANSITION_MS),
+                notification);
         fadeOut.setFromValue(1);
         fadeOut.setToValue(0);
 

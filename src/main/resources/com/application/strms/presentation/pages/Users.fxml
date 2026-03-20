@@ -25,7 +25,7 @@
                 </VBox>
 
                 <HBox alignment="CENTER_RIGHT" spacing="10" HBox.hgrow="ALWAYS">
-                    <Button fx:id="add_user_button"
+                    <Button fx:id="addUserButton"
                             text="+ Add User"
                             onAction="#goToAddUser"
                             styleClass="primary-button"
@@ -34,7 +34,7 @@
                 </HBox>
             </HBox>
 
-            <Label fx:id="empty_state"
+            <Label fx:id="emptyStateLabel"
                    text="No users found."
                    styleClass="page-subtitle"
                    alignment="CENTER"
@@ -49,7 +49,7 @@
                 <Insets left="40.0" right="40.0" bottom="30.0"/>
             </padding>
 
-            <TableView fx:id="users_table" styleClass="users-table" VBox.vgrow="ALWAYS">
+            <TableView fx:id="usersTable" styleClass="users-table" VBox.vgrow="ALWAYS">
                 <columns>
                     <TableColumn text="Name" prefWidth="150">
                         <cellValueFactory>
@@ -79,7 +79,7 @@
                 <Insets left="40.0" right="40.0" bottom="30.0"/>
             </padding>
 
-            <Button fx:id="edit_button"
+            <Button fx:id="editButton"
                     text="Edit Selected User"
                     onAction="#handleEdit"
                     maxWidth="Infinity"

@@ -22,17 +22,17 @@
         </VBox>
 
         <VBox spacing="15">
-            <TextField fx:id="email_field" promptText="Email" styleClass="input-field"/>
-            <PasswordField fx:id="password_field" promptText="Password" styleClass="input-field"/>
+            <TextField fx:id="emailField" promptText="Email" styleClass="input-field"/>
+            <PasswordField fx:id="passwordField" promptText="Password" styleClass="input-field"/>
         </VBox>
 
-        <Label fx:id="errors"
+        <Label fx:id="errorLabel"
                text="Invalid credentials"
                styleClass="error-label"
                managed="false"
                visible="false"/>
 
-        <Button fx:id="login_button"
+        <Button fx:id="loginButton"
                 text="Continue"
                 onAction="#login"
                 disable="true"
