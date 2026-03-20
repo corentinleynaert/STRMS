@@ -2,6 +2,7 @@ package com.application.strms.application.service;
 
 import com.application.strms.application.result.AddUserResult;
 import com.application.strms.application.result.LoginResult;
+import com.application.strms.application.result.UpdateUserResult;
 import com.application.strms.domain.model.*;
 import com.application.strms.domain.repository.UserRepository;
 import com.application.strms.domain.service.PasswordHasher;
@@ -89,6 +90,55 @@ public class AuthService {
             throw new IOException("Error accessing user repository while adding user", e);
         } catch (Exception e) {
             return AddUserResult.failure(e.getMessage());
+        }
+    }
+
+    public UpdateUserResult editUser(User currentUser, Ulid userId, String name, String emailRaw, String role,
+            String passwordRaw)
+            throws IOException {
+        if (currentUser == null || !currentUser.isAdmin()) {
+            return UpdateUserResult.failure("Insufficient permissions");
+        }
+
+        Email email;
+        Password password;
+
+        try {
+            email = new Email(emailRaw);
+            password = new Password(passwordRaw);
+        } catch (IllegalArgumentException e) {
+            return UpdateUserResult.failure("Invalid input");
+        }
+
+        try {
+            User existingUser = userRepository.findById(userId);
+
+            if (existingUser == null) {
+                return UpdateUserResult.failure("User not found");
+            }
+
+            User userWithSameEmail = userRepository.findByEmail(email);
+            if (userWithSameEmail != null && !userWithSameEmail.getId().equals(userId)) {
+                return UpdateUserResult.failure("User with email " + email + " already exists");
+            }
+
+            User updatedUser = switch (role.toUpperCase()) {
+                case "ADMIN" -> new Admin(userId, name, email);
+                case "MANAGER" -> new Manager(userId, name, email);
+                case "ENGINEER" -> new Engineer(userId, name, email);
+                default -> throw new IllegalArgumentException("Unknown role: " + role);
+            };
+
+            String passwordHashed = this.passwordHasher.hash(password);
+            UserAuth updatedAuth = new UserAuth(userId, passwordHashed);
+
+            userRepository.updateUser(updatedUser, updatedAuth);
+
+            return UpdateUserResult.success(updatedUser);
+        } catch (IOException e) {
+            throw new IOException("Error accessing user repository while editing user", e);
+        } catch (Exception e) {
+            return UpdateUserResult.failure(e.getMessage());
         }
     }
 }

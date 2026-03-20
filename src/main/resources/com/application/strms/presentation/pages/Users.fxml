@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.application.strms.presentation.controller.pages.UsersController"
+            styleClass="page-root">
+
+    <top>
+        <VBox spacing="15" styleClass="users-header">
+            <padding>
+                <Insets top="30.0" left="40.0" right="40.0" bottom="20.0"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <VBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="STRMS" styleClass="page-title"/>
+                    <Label text="Manage users." styleClass="page-subtitle"/>
+                </VBox>
+
+                <HBox alignment="CENTER_RIGHT" spacing="10" HBox.hgrow="ALWAYS">
+                    <Button fx:id="add_user_button"
+                            text="+ Add User"
+                            onAction="#goToAddUser"
+                            styleClass="primary-button"
+                            visible="false"
+                            managed="false"/>
+                </HBox>
+            </HBox>
+
+            <Label fx:id="empty_state"
+                   text="No users found."
+                   styleClass="page-subtitle"
+                   alignment="CENTER"
+                   managed="false"
+                   visible="false"/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox styleClass="users-container">
+            <padding>
+                <Insets left="40.0" right="40.0" bottom="30.0"/>
+            </padding>
+
+            <TableView fx:id="users_table" styleClass="users-table" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn text="Name" prefWidth="150">
+                        <cellValueFactory>
+                            <javafx.scene.control.cell.PropertyValueFactory property="name"/>
+                        </cellValueFactory>
+                    </TableColumn>
+
+                    <TableColumn text="Email" prefWidth="250">
+                        <cellValueFactory>
+                            <javafx.scene.control.cell.PropertyValueFactory property="email"/>
+                        </cellValueFactory>
+                    </TableColumn>
+
+                    <TableColumn text="Role" prefWidth="150">
+                        <cellValueFactory>
+                            <javafx.scene.control.cell.PropertyValueFactory property="role"/>
+                        </cellValueFactory>
+                    </TableColumn>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+
+    <bottom>
+        <VBox spacing="12">
+            <padding>
+                <Insets left="40.0" right="40.0" bottom="30.0"/>
+            </padding>
+
+            <Button fx:id="edit_button"
+                    text="Edit Selected User"
+                    onAction="#handleEdit"
+                    maxWidth="Infinity"
+                    styleClass="primary-button"
+                    disable="true"/>
+
+            <Button text="Back"
+                    onAction="#goBack"
+                    maxWidth="Infinity"
+                    styleClass="secondary-button"/>
+        </VBox>
+    </bottom>
+</BorderPane>
+

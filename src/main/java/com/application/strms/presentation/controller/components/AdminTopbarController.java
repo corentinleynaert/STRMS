@@ -10,6 +10,11 @@ public class AdminTopbarController extends BaseController {
     }
 
     @FXML
+    protected void goToUsers() {
+        navigator.goTo("Users");
+    }
+
+    @FXML
     protected void goToAddUser() {
         navigator.goTo("AddUser");
     }

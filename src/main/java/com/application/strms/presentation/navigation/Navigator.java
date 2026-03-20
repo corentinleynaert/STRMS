@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 public class Navigator {
 
@@ -23,8 +24,12 @@ public class Navigator {
     }
 
     public void goTo(String viewName) {
+        goTo(viewName, null);
+    }
+
+    public void goTo(String viewName, Consumer<Object> controllerCallback) {
         try {
-            Node view = load(viewName);
+            Node view = load(viewName, controllerCallback);
             layout.setContent(view);
             layout.updateTopbar();
         } catch (IOException e) {
@@ -34,7 +39,7 @@ public class Navigator {
         }
     }
 
-    private Node load(String name) throws IOException {
+    private Node load(String name, Consumer<Object> controllerCallback) throws IOException {
         FXMLLoader loader = ViewLoader.load(name);
         Node node = loader.load();
 
@@ -42,6 +47,10 @@ public class Navigator {
         if (controller instanceof BaseController baseController) {
             baseController.setApplicationContext(context);
             baseController.setNavigator(this);
+        }
+
+        if (controllerCallback != null) {
+            controllerCallback.accept(controller);
         }
 
         return node;

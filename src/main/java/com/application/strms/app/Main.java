@@ -29,7 +29,7 @@ public class Main extends Application {
             PasswordHasher passwordHasher = new BCryptPasswordHasher();
             AuthService authService = new AuthService(userRepository, passwordHasher);
             SessionManager sessionManager = new SessionManager();
-            ApplicationContext applicationContext = new ApplicationContext(authService, sessionManager);
+            ApplicationContext applicationContext = new ApplicationContext(authService, sessionManager, userRepository);
 
             FXMLLoader loader = ViewLoader.load("Layout");
             Parent root = loader.load();

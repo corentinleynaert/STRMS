@@ -5,27 +5,46 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 
+<?import javafx.scene.layout.Region?> 
+
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.application.strms.presentation.controller.components.AdminTopbarController"
             styleClass="topbar-container">
 
     <left>
-        <HBox alignment="CENTER_LEFT" spacing="12" styleClass="topbar-left">
-            <Label text="STRMS" styleClass="app-title"/>
-            <Button text="Home"
-                    onAction="#goToHome"
-                    styleClass="home-button"/>
+        <HBox alignment="CENTER_LEFT" spacing="30" styleClass="topbar-left">
+            <Label text="STRMS" styleClass="topbar-brand"/>
+            
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Button text="Dashboard" onAction="#goToHome" styleClass="topbar-nav-button">
+                    <graphic>
+                        <Region styleClass="icon-placeholder"/> 
+                    </graphic>
+                </Button>
+            </HBox>
         </HBox>
     </left>
 
     <right>
-        <HBox alignment="CENTER_RIGHT" spacing="10" styleClass="topbar-right">
-            <Button text="+ Add User"
-                    onAction="#goToAddUser"
-                    styleClass="primary-button"/>
-            <Button text="Logout"
-                    onAction="#logout"
-                    styleClass="logout-button"/>
+        <HBox alignment="CENTER_RIGHT" spacing="15" styleClass="topbar-right">
+            <Button text="Users" onAction="#goToUsers" styleClass="topbar-action-button, add-user-button">
+                <graphic>
+                     <Region styleClass="icon-placeholder"/>
+                </graphic>
+            </Button>
+
+            <Button text="Add User" onAction="#goToAddUser" styleClass="topbar-action-button, add-user-button">
+                <graphic>
+                     <Region styleClass="icon-placeholder"/>
+                </graphic>
+            </Button>
+            
+
+            <Button text="Logout" onAction="#logout" styleClass="topbar-nav-button, logout-button">
+                <graphic>
+                     <Region styleClass="icon-placeholder"/>
+                </graphic>
+            </Button>
         </HBox>
     </right>
 </BorderPane>

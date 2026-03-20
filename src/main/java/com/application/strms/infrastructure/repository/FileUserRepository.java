@@ -10,7 +10,6 @@ import com.application.strms.domain.model.UserAuth;
 import com.application.strms.domain.repository.UserRepository;
 import com.application.strms.infrastructure.persistence.FileHandler;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +44,11 @@ public class FileUserRepository implements UserRepository {
     }
 
     @Override
+    public User findById(Ulid id) {
+        return users.get(id);
+    }
+
+    @Override
     public UserAuth findAuthByEmail(Email email) throws IOException {
         try {
             List<UserAuth> auths = fileHandler.load("users.txt", this::mapLineToUserAuth);
@@ -72,8 +76,39 @@ public class FileUserRepository implements UserRepository {
         }
     }
 
-    private User findById(Ulid id) {
-        return users.get(id);
+    @Override
+    public void updateUser(User user, UserAuth userAuth) throws IOException {
+        try {
+            if (!user.getId().equals(userAuth.getId())) {
+                throw new IllegalArgumentException("User ID and UserAuth ID must be the same");
+            }
+
+            User existingUser = users.get(user.getId());
+
+            if (existingUser == null) {
+                throw new IllegalArgumentException("User not found: " + user.getId());
+            }
+
+            users.put(user.getId(), user);
+
+            List<UserAuth> auths = fileHandler.load("users.txt", this::mapLineToUserAuth);
+            List<UserLine> updatedLines = auths.stream()
+                    .map(auth -> {
+                        User current = users.get(auth.getId());
+                        UserAuth authToUse = auth.getId().equals(user.getId()) ? userAuth : auth;
+                        return new UserLine(current, authToUse);
+                    })
+                    .toList();
+
+            fileHandler.replaceAll("users.txt", updatedLines, this::mapUserLineToString);
+        } catch (IOException e) {
+            throw new IOException("Failed to update user: " + user.getId(), e);
+        }
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return users.values().stream().toList();
     }
 
     private User mapLineToUser(String line) {

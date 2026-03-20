@@ -24,7 +24,8 @@ public final class Ulid {
     }
 
     public static boolean isValid(String value) {
-        if (value == null || value.isBlank()) return false;
+        if (value == null || value.isBlank())
+            return false;
 
         try {
             ULID.parseULID(value);
@@ -36,8 +37,11 @@ public final class Ulid {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Ulid ulid)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof Ulid ulid))
+            return false;
+
         return value.equals(ulid.value);
     }
 
