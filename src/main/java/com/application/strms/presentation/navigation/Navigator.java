@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 public class Navigator {
-
     private final ApplicationContext context;
     private final LayoutController layout;
 

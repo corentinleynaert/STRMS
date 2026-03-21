@@ -10,4 +10,34 @@ public class ManagerRole implements UserRole {
     public boolean canManageUsers() {
         return false;
     }
+
+    @Override
+    public boolean canCreateTask() {
+        return true;
+    }
+
+    @Override
+    public boolean canDeleteTask() {
+        return false;
+    }
+
+    @Override
+    public boolean canAssignTask() {
+        return true;
+    }
+
+    @Override
+    public boolean canUpdateTask() {
+        return true;
+    }
+
+    @Override
+    public boolean canChangeTaskStatus() {
+        return true;
+    }
+
+    @Override
+    public boolean canGenerateReports() {
+        return true;
+    }
 }
