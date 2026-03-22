@@ -228,8 +228,7 @@ public class TasksController extends BaseController {
         listView.getItems().addAll(tasks);
 
         VBox popupContent = new VBox(listView);
-        popupContent.setStyle(
-                "-fx-border-color: #cccccc; -fx-border-width: 1; -fx-background-color: white; -fx-padding: 8;");
+        popupContent.getStyleClass().add("table-cell-styled");
 
         PopupControl popup = new PopupControl() {
             {
@@ -375,8 +374,7 @@ public class TasksController extends BaseController {
         listView.getItems().addAll(engineers);
 
         VBox popupContent = new VBox(listView);
-        popupContent.setStyle(
-                "-fx-border-color: #cccccc; -fx-border-width: 1; -fx-background-color: white; -fx-padding: 8;");
+        popupContent.getStyleClass().add("table-cell-styled");
 
         PopupControl popup = new PopupControl() {
             {

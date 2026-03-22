@@ -25,11 +25,9 @@
                 </VBox>
 
                 <HBox alignment="CENTER_RIGHT" spacing="16" HBox.hgrow="ALWAYS">
-                    <Button fx:id="addTaskButton"
-                            text="+ Add Task"
+                    <Button text="+ Add Task"
                             onAction="#goToAddTask"
-                            styleClass="primary-button"
-                            style="-fx-min-width: 140px;"/>
+                            styleClass="primary-button,add-button-small"/>
                 </HBox>
             </HBox>
 
@@ -105,8 +103,7 @@
 
             <Button text="Back"
                     onAction="#goBack"
-                    styleClass="secondary-button"
-                    style="-fx-text-fill: #888888;"/>
+                    styleClass="secondary-button,secondary-text"/>
         </HBox>
     </bottom>
 </BorderPane>

@@ -26,42 +26,37 @@ import javafx.geometry.Rectangle2D;
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
-        try {
-            FileHandler fileHandler = new FileHandler();
-            UserRepository userRepository = new FileUserRepository(fileHandler);
-            TaskRepository taskRepository = new FileTaskRepository(fileHandler, userRepository);
-            PasswordHasher passwordHasher = new BCryptPasswordHasher();
-            AuthService authService = new AuthService(userRepository, passwordHasher);
-            TaskManager taskManager = new TaskManager(taskRepository);
-            SessionManager sessionManager = new SessionManager();
-            ApplicationContext applicationContext = new ApplicationContext(authService, sessionManager, userRepository,
-                    taskManager);
+        FileHandler fileHandler = new FileHandler();
+        UserRepository userRepository = new FileUserRepository(fileHandler);
+        TaskRepository taskRepository = new FileTaskRepository(fileHandler, userRepository);
+        PasswordHasher passwordHasher = new BCryptPasswordHasher();
+        AuthService authService = new AuthService(userRepository, passwordHasher);
+        TaskManager taskManager = new TaskManager(taskRepository);
+        SessionManager sessionManager = new SessionManager();
+        ApplicationContext applicationContext = new ApplicationContext(authService, sessionManager, userRepository,
+                taskManager);
 
-            FXMLLoader loader = ViewLoader.load("Layout");
-            Parent root = loader.load();
+        FXMLLoader loader = ViewLoader.load("Layout");
+        Parent root = loader.load();
 
-            LayoutController layoutController = loader.getController();
+        LayoutController layoutController = loader.getController();
 
-            Navigator navigator = new Navigator(layoutController, applicationContext);
+        Navigator navigator = new Navigator(layoutController, applicationContext);
 
-            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-            Scene scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        Scene scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight());
 
-            navigator.goTo("Login");
+        navigator.goTo("Login");
 
-            stage.setTitle("Application");
-            stage.setScene(scene);
-            stage.setX(screenBounds.getMinX());
-            stage.setY(screenBounds.getMinY());
-            stage.setWidth(screenBounds.getWidth());
-            stage.setHeight(screenBounds.getHeight());
-            stage.setMaximized(true);
-            stage.setMinWidth(800);
-            stage.setMinHeight(600);
-            stage.show();
-
-        } catch (IllegalArgumentException e) {
-            System.exit(1);
-        }
+        stage.setTitle("Application");
+        stage.setScene(scene);
+        stage.setX(screenBounds.getMinX());
+        stage.setY(screenBounds.getMinY());
+        stage.setWidth(screenBounds.getWidth());
+        stage.setHeight(screenBounds.getHeight());
+        stage.setMaximized(true);
+        stage.setMinWidth(800);
+        stage.setMinHeight(600);
+        stage.show();
     }
 }

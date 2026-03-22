@@ -28,8 +28,7 @@
                     <Button fx:id="addUserButton"
                             text="+ Add User"
                             onAction="#goToAddUser"
-                            styleClass="primary-button"
-                            style="-fx-min-width: 140px;"
+                            styleClass="primary-button,add-button-small"
                             visible="false"
                             managed="false"/>
                 </HBox>

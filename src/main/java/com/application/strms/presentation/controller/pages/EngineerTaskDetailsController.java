@@ -259,11 +259,11 @@ public class EngineerTaskDetailsController extends BaseController {
             TextArea noteArea = new TextArea();
             noteArea.setWrapText(true);
             noteArea.setPrefRowCount(6);
-            noteArea.setStyle("-fx-font-size: 11;");
+            noteArea.getStyleClass().add("note-area");
             noteArea.setPromptText("Enter your note here...");
 
             VBox content = new VBox(10);
-            content.setStyle("-fx-padding: 15;");
+            content.getStyleClass().add("dialog-content");
             content.getChildren().add(noteArea);
             content.setPrefWidth(500);
 

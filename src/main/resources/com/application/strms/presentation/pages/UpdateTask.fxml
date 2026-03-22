@@ -50,7 +50,6 @@
         </VBox>
 
         <Label fx:id="errorLabel"
-               text=""
                styleClass="error-label"
                visible="false"
                managed="false"
@@ -60,13 +59,11 @@
             <Button text="Update Task"
                     fx:id="updateTaskButton"
                     onAction="#updateTask"
-                    styleClass="primary-button"
-                    style="-fx-min-width: 180px;"/>
+                    styleClass="primary-button,form-button"/>
 
             <Button text="Back"
                     onAction="#goBack"
-                    styleClass="secondary-button"
-                    style="-fx-text-fill: #888888;"/>
+                    styleClass="secondary-button,secondary-text"/>
         </VBox>
     </VBox>
 </StackPane>

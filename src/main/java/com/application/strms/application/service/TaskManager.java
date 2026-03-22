@@ -75,6 +75,7 @@ public class TaskManager {
                         otherTask.removeDependency(task, currentUser);
                         updateCollections(otherTask);
                     } catch (InsufficientPermissionsException e) {
+                        throw new IOException("Cannot remove dependency: " + e.getMessage(), e);
                     }
                 }
             }
@@ -228,24 +229,6 @@ public class TaskManager {
         }
     }
 
-    public List<Task> getReadyTasks() {
-        return readyTasks.stream().toList();
-    }
-
-    public List<Task> getInProgressTasks() {
-        return inProgressTaskIds.stream()
-                .map(allTasks::get)
-                .filter(task -> task != null && task.getStatus() == TaskStatus.IN_PROGRESS)
-                .toList();
-    }
-
-    public List<Task> getBlockedTasks() {
-        return blockedTaskIds.stream()
-                .map(allTasks::get)
-                .filter(task -> task != null && task.getStatus() == TaskStatus.BLOCKED)
-                .toList();
-    }
-
     public UpdateTaskResult addTaskHistoryEntry(Ulid taskId, TaskHistoryEntry entry) throws IOException {
         try {
             Task task = findTaskOrThrow(taskId);
@@ -256,24 +239,6 @@ public class TaskManager {
             throw e;
         } catch (Exception e) {
             return UpdateTaskResult.failure(e.getMessage());
-        }
-    }
-
-    public void reloadTasks() throws IOException {
-        allTasks.clear();
-        inProgressTaskIds.clear();
-        blockedTaskIds.clear();
-        readyTasks.clear();
-        loadTasks();
-    }
-
-    public void saveAllTasks() throws IOException {
-        for (Task task : allTasks.values()) {
-            try {
-                taskRepository.update(task);
-            } catch (IOException e) {
-                throw new IOException("Failed to save task: " + task.getUlid(), e);
-            }
         }
     }
 
@@ -310,7 +275,7 @@ public class TaskManager {
         }
     }
 
-    private void loadTasks() throws IOException {
+    private void loadTasks() {
         List<Task> loadedTasks = taskRepository.findAll();
 
         for (Task task : loadedTasks) {
