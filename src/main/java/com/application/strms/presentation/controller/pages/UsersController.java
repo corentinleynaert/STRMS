@@ -65,6 +65,7 @@ public class UsersController extends BaseController {
             }
         } catch (Exception e) {
             showEmptyState();
+            navigator.notify("Error loading users: " + e.getMessage());
         }
     }
 
@@ -99,19 +100,19 @@ public class UsersController extends BaseController {
                 }
             });
         } catch (Exception e) {
-            System.err.println("Error navigating to UpdateUser: " + e.getMessage());
+            navigator.notify("Error navigating to user update: " + e.getMessage());
         }
     }
 
     private void addDeleteButtonColumn() {
         TableColumn<UserDisplay, Void> deleteColumn = new TableColumn<>("Actions");
         deleteColumn.setPrefWidth(100);
-        deleteColumn.setCellFactory(param -> new TableCell<>() {
+        deleteColumn.setCellFactory(_ -> new TableCell<>() {
             private final Button deleteButton = new Button("Delete");
 
             {
                 deleteButton.getStyleClass().add("delete-button");
-                deleteButton.setOnAction(event -> {
+                deleteButton.setOnAction(_ -> {
                     UserDisplay userDisplay = getTableView().getItems().get(getIndex());
                     if (userDisplay != null) {
                         handleDelete(userDisplay.getUser());

@@ -3,10 +3,14 @@ package com.application.strms.infrastructure.repository;
 import com.application.strms.domain.exception.DuplicateTaskException;
 import com.application.strms.domain.exception.FilePersistenceException;
 import com.application.strms.domain.exception.TaskNotFoundException;
+import com.application.strms.domain.model.Admin;
+import com.application.strms.domain.model.Email;
 import com.application.strms.domain.model.Engineer;
+import com.application.strms.domain.model.Manager;
 import com.application.strms.domain.model.PriorityLevel;
 import com.application.strms.domain.model.Task;
 import com.application.strms.domain.model.TaskCategory;
+import com.application.strms.domain.model.TaskHistoryEntry;
 import com.application.strms.domain.model.TaskStatus;
 import com.application.strms.domain.model.Ulid;
 import com.application.strms.domain.model.User;
@@ -44,9 +48,13 @@ public class FileTaskRepository implements TaskRepository {
             }
 
             reconstituteDependencies();
-            restoreAssignedEngineers();
+            try {
+                restoreAssignedEngineers();
+            } catch (IOException e) {
+                throw new IOException("Failed to restore assigned engineers", e);
+            }
         } catch (IOException e) {
-            throw new FilePersistenceException("Failed to initialize task repository from file", e);
+            throw new IOException("Failed to initialize task repository from file", e);
         }
     }
 
@@ -64,7 +72,7 @@ public class FileTaskRepository implements TaskRepository {
             tasks.put(task.getUlid(), task);
             fileHandler.save(TASKS_FILE, List.of(task), this::mapTaskToString);
         } catch (IOException e) {
-            throw new FilePersistenceException("Failed to save task: " + task.getUlid(), e);
+            throw new IOException("Failed to save task: " + task.getUlid(), e);
         }
     }
 
@@ -84,7 +92,7 @@ public class FileTaskRepository implements TaskRepository {
             List<Task> allTasks = new ArrayList<>(tasks.values());
             fileHandler.replaceAll(TASKS_FILE, allTasks, this::mapTaskToString);
         } catch (IOException e) {
-            throw new FilePersistenceException("Failed to update task: " + task.getUlid(), e);
+            throw new IOException("Failed to update task: " + task.getUlid(), e);
         }
     }
 
@@ -104,7 +112,7 @@ public class FileTaskRepository implements TaskRepository {
             List<Task> allTasks = new ArrayList<>(tasks.values());
             fileHandler.replaceAll(TASKS_FILE, allTasks, this::mapTaskToString);
         } catch (IOException e) {
-            throw new FilePersistenceException("Failed to delete task: " + id, e);
+            throw new IOException("Failed to delete task: " + id, e);
         }
     }
 
@@ -168,7 +176,13 @@ public class FileTaskRepository implements TaskRepository {
             }
             dependencyMap.put(ulid, depUlids);
 
-            return new Task(ulid, title, description, priority, category, status, deadline);
+            Task task = new Task(ulid, title, description, priority, category, status, deadline);
+
+            if (parts.length >= 10 && !parts[9].equals("null") && !parts[9].isEmpty()) {
+                loadHistoryIntoTask(task, parts[9]);
+            }
+
+            return task;
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to parse task line: " + line, e);
         }
@@ -189,20 +203,16 @@ public class FileTaskRepository implements TaskRepository {
         }
     }
 
-    private void restoreAssignedEngineers() {
+    private void restoreAssignedEngineers() throws IOException {
         for (Map.Entry<Ulid, Ulid> entry : assignedEngineerMap.entrySet()) {
             Task task = tasks.get(entry.getKey());
             if (task != null) {
-                try {
-                    List<User> users = userRepository.getAllUsers();
-                    for (User user : users) {
-                        if (user instanceof Engineer engineer && engineer.getId().equals(entry.getValue())) {
-                            task.assignEngineerUnchecked(engineer);
-                            break;
-                        }
+                List<User> users = userRepository.getAllUsers();
+                for (User user : users) {
+                    if (user instanceof Engineer engineer && engineer.getId().equals(entry.getValue())) {
+                        task.assignEngineerUnchecked(engineer);
+                        break;
                     }
-                } catch (Exception e) {
-                    System.err.println("Failed to restore assigned engineer for task: " + entry.getKey());
                 }
             }
         }
@@ -239,7 +249,90 @@ public class FileTaskRepository implements TaskRepository {
                     .orElse("null");
             sb.append(deps);
         }
+        sb.append(";");
+
+        List<TaskHistoryEntry> history = task.getHistory();
+        if (history.isEmpty()) {
+            sb.append("null");
+        } else {
+            String historyStr = serializeHistory(history);
+            sb.append(historyStr);
+        }
 
         return sb.toString();
+    }
+
+    private String serializeHistory(List<TaskHistoryEntry> history) {
+        List<String> parts = new ArrayList<>();
+        for (TaskHistoryEntry entry : history) {
+            String timestamp = entry.getTimestamp().format(DATE_FORMATTER);
+            String action = entry.getAction().replace("|||", "___").replace("$", "_DOLLAR_");
+            String userId = entry.getPerformedBy().getId().toString();
+            String userName = entry.getPerformedBy().getName().replace("|||", "___").replace("$", "_DOLLAR_");
+            String userRole = entry.getPerformedBy().getRole().getIdentifier();
+
+            String entryStr = String.format("%s|||%s|||%s|||%s|||%s", timestamp, action, userId, userName, userRole);
+            parts.add(entryStr);
+        }
+        return String.join("$", parts);
+    }
+
+    private void loadHistoryIntoTask(Task task, String historyStr) {
+        if (historyStr == null || historyStr.isEmpty() || historyStr.equals("null")) {
+            return;
+        }
+
+        String[] entries = historyStr.split("\\$");
+        for (String entry : entries) {
+            if (entry.isBlank())
+                continue;
+
+            String[] fields = entry.split("\\|\\|\\|");
+            if (fields.length >= 5) {
+                try {
+                    String timestamp = fields[0];
+                    String action = fields[1].replace("_DOLLAR_", "$").replace("___", "|||");
+                    String userId = fields[2];
+                    String userName = fields[3].replace("_DOLLAR_", "$").replace("___", "|||");
+                    String userRole = fields[4];
+
+                    LocalDateTime dateTime = LocalDateTime.parse(timestamp, DATE_FORMATTER);
+
+                    User performedBy = createUserFromData(userId, userName, userRole);
+
+                    TaskHistoryEntry historyEntry = new TaskHistoryEntry(action, performedBy, dateTime);
+                    task.addHistoryEntry(historyEntry);
+                } catch (Exception e) {
+                    throw new FilePersistenceException("Failed to load task history", e);
+                }
+            }
+        }
+    }
+
+    private User createUserFromData(String userId, String userName, String userRole) {
+        List<User> allUsers = userRepository.getAllUsers();
+        for (User user : allUsers) {
+            if (user.getId().toString().equals(userId)) {
+                return user;
+            }
+        }
+
+        return createUserAsTemporarySubstitute(userId, userName, userRole);
+    }
+
+    private User createUserAsTemporarySubstitute(String userId, String userName, String userRole) {
+        try {
+            Ulid ulid = Ulid.fromString(userId);
+            Email email = new Email(userName.toLowerCase().replace(" ", ".") + "@app.local");
+
+            return switch (userRole) {
+                case "ADMIN" -> new Admin(ulid, userName, email);
+                case "MANAGER" -> new Manager(ulid, userName, email);
+                case "ENGINEER" -> new Engineer(ulid, userName, email);
+                default -> new Engineer(ulid, userName, email);
+            };
+        } catch (IllegalArgumentException e) {
+            throw new FilePersistenceException("Failed to create temporary user with ID: " + userId, e);
+        }
     }
 }

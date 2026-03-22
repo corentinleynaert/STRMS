@@ -31,8 +31,6 @@ public class TasksController extends BaseController {
     @FXML
     private TableView<TaskDisplay> tasksTable;
     @FXML
-    private Button addTaskButton;
-    @FXML
     private Button editButton;
     @FXML
     private Label emptyStateLabel;
@@ -69,13 +67,14 @@ public class TasksController extends BaseController {
             }
         } catch (Exception e) {
             showEmptyState();
+            navigator.notify("Error loading tasks: " + e.getMessage());
         }
     }
 
     private void addDependencyColumns() {
         TableColumn<TaskDisplay, Void> actionsCol = new TableColumn<>("Actions");
         actionsCol.setPrefWidth(330);
-        actionsCol.setCellFactory(_ -> new TableCell<TaskDisplay, Void>() {
+        actionsCol.setCellFactory(_ -> new TableCell<>() {
             private final HBox hbox = new HBox(8);
 
             {
@@ -154,7 +153,7 @@ public class TasksController extends BaseController {
             return;
         }
 
-        showSelectionPopup(sourceButton, dependencies, selectedTask -> {
+        showSelectionPopup(sourceButton, dependencies, _ -> {
         });
     }
 
@@ -180,7 +179,7 @@ public class TasksController extends BaseController {
                             context.getSessionManager().getCurrentUser());
 
                     if (result.isSuccess()) {
-                        navigator.notify("Dependency added: " + selectedTask.getTitle());
+                        navigator.notify(UiConstants.Messages.TASK_DEPENDENCY_ADDED);
                         tasksTable.getItems().clear();
                         loadTasks();
                     } else {
@@ -210,7 +209,7 @@ public class TasksController extends BaseController {
                         context.getSessionManager().getCurrentUser());
 
                 if (result.isSuccess()) {
-                    navigator.notify("Dependency removed: " + selectedTask.getTitle());
+                    navigator.notify(UiConstants.Messages.TASK_DEPENDENCY_REMOVED);
                     tasksTable.getItems().clear();
                     loadTasks();
                 } else {
@@ -242,7 +241,7 @@ public class TasksController extends BaseController {
 
         final PopupControl finalPopup = popup;
 
-        listView.setCellFactory(_ -> new ListCell<Task>() {
+        listView.setCellFactory(_ -> new ListCell<>() {
             private final Button selectBtn = new Button();
 
             {
@@ -306,7 +305,7 @@ public class TasksController extends BaseController {
                 }
             });
         } catch (Exception e) {
-            System.err.println("Error navigating to UpdateTask: " + e.getMessage());
+            navigator.notify("Error navigating to task update: " + e.getMessage());
         }
     }
 
@@ -389,7 +388,7 @@ public class TasksController extends BaseController {
 
         final PopupControl finalPopup = popup;
 
-        listView.setCellFactory(_ -> new ListCell<Engineer>() {
+        listView.setCellFactory(_ -> new ListCell<>() {
             private final Button selectBtn = new Button();
 
             {

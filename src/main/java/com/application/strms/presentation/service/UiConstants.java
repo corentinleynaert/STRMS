@@ -15,6 +15,8 @@ public final class UiConstants {
         public static final String TASKS = "Tasks";
         public static final String ADD_TASK = "AddTask";
         public static final String UPDATE_TASK = "UpdateTask";
+        public static final String ENGINEER_TASKS = "EngineerTasks";
+        public static final String ENGINEER_TASK_DETAILS = "EngineerTaskDetails";
 
         private Pages() {
             throw new AssertionError("Utility class");
@@ -51,7 +53,6 @@ public final class UiConstants {
 
     public static final class Styles {
         public static final String NOTIFICATION = "notification";
-        public static final String ERROR_LABEL = "error-label";
 
         private Styles() {
             throw new AssertionError("Utility class");
