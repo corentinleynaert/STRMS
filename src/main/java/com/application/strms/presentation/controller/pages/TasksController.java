@@ -17,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -34,6 +35,8 @@ public class TasksController extends BaseController {
     private Button editButton;
     @FXML
     private Label emptyStateLabel;
+    @FXML
+    private ChoiceBox<String> filterChoiceBox;
 
     @FXML
     public void initialize() {
@@ -41,7 +44,34 @@ public class TasksController extends BaseController {
         tasksTable.getSelectionModel().selectedItemProperty()
                 .addListener((_, _, newValue) -> editButton.setDisable(newValue == null));
 
+        initializeFilterChoiceBox();
         addDependencyColumns();
+    }
+
+    private void initializeFilterChoiceBox() {
+        filterChoiceBox.getItems().addAll("ALL", "READY", "IN_PROGRESS", "BLOCKED");
+        filterChoiceBox.setValue("ALL");
+        filterChoiceBox.valueProperty().addListener((_, _, newValue) -> {
+            if (newValue != null) {
+                applyFilter(newValue);
+            }
+        });
+    }
+
+    private void applyFilter(String filterValue) {
+        try {
+            TaskManager taskManager = context.getTaskManager();
+            List<Task> tasks = switch (filterValue) {
+                case "READY" -> taskManager.getReadyTasks();
+                case "IN_PROGRESS" -> taskManager.getInProgressTasks();
+                case "BLOCKED" -> taskManager.getBlockedTasks();
+                default -> taskManager.getAllTasks();
+            };
+            loadTasksInTable(tasks);
+        } catch (Exception e) {
+            showEmptyState();
+            navigator.notify("Error applying filter: " + e.getMessage());
+        }
     }
 
     @Override
@@ -54,20 +84,32 @@ public class TasksController extends BaseController {
     private void loadTasks() {
         try {
             TaskManager taskManager = context.getTaskManager();
-            List<Task> tasks = taskManager.getAllTasks();
-
-            if (tasks == null || tasks.isEmpty()) {
-                showEmptyState();
-            } else {
-                tasks.stream()
-                        .map(TaskDisplay::new)
-                        .forEach(taskDisplay -> tasksTable.getItems().add(taskDisplay));
-                UiUtils.setVisibility(tasksTable, true);
-                UiUtils.setVisibility(emptyStateLabel, false);
-            }
+            loadTasksInTable(taskManager.getAllTasks());
         } catch (Exception e) {
             showEmptyState();
             navigator.notify("Error loading tasks: " + e.getMessage());
+        }
+    }
+
+    private void loadTasksInTable(List<Task> tasks) {
+        if (tasks == null || tasks.isEmpty()) {
+            showEmptyState();
+        } else {
+            tasksTable.getItems().setAll(
+                    tasks.stream()
+                            .map(TaskDisplay::new)
+                            .toList());
+            UiUtils.setVisibility(tasksTable, true);
+            UiUtils.setVisibility(emptyStateLabel, false);
+        }
+    }
+
+    private void refreshTasksWithCurrentFilter() {
+        String currentFilter = filterChoiceBox.getValue();
+        if (currentFilter != null) {
+            applyFilter(currentFilter);
+        } else {
+            loadTasks();
         }
     }
 
@@ -180,8 +222,7 @@ public class TasksController extends BaseController {
 
                     if (result.isSuccess()) {
                         navigator.notify(UiConstants.Messages.TASK_DEPENDENCY_ADDED);
-                        tasksTable.getItems().clear();
-                        loadTasks();
+                        refreshTasksWithCurrentFilter();
                     } else {
                         navigator.notify("Failed to add dependency");
                     }
@@ -210,8 +251,7 @@ public class TasksController extends BaseController {
 
                 if (result.isSuccess()) {
                     navigator.notify(UiConstants.Messages.TASK_DEPENDENCY_REMOVED);
-                    tasksTable.getItems().clear();
-                    loadTasks();
+                    refreshTasksWithCurrentFilter();
                 } else {
                     navigator.notify("Failed to remove dependency");
                 }
@@ -321,8 +361,7 @@ public class TasksController extends BaseController {
 
             if (result.isSuccess()) {
                 navigator.notify("Task successfully deleted!");
-                tasksTable.getItems().clear();
-                loadTasks();
+                refreshTasksWithCurrentFilter();
             } else {
                 navigator.notify("Error: " + result.getMessage());
             }
@@ -352,8 +391,7 @@ public class TasksController extends BaseController {
 
                     if (result.isSuccess()) {
                         navigator.notify("Task assigned to: " + selectedEngineer.getName());
-                        tasksTable.getItems().clear();
-                        loadTasks();
+                        refreshTasksWithCurrentFilter();
                     } else {
                         navigator.notify("Failed to assign task");
                     }
@@ -427,8 +465,7 @@ public class TasksController extends BaseController {
 
             if (result.isSuccess()) {
                 navigator.notify("Task unassigned");
-                tasksTable.getItems().clear();
-                loadTasks();
+                refreshTasksWithCurrentFilter();
             } else {
                 navigator.notify("Error: " + result.getMessage());
             }

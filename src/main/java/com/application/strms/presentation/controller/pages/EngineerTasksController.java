@@ -41,7 +41,6 @@ public class EngineerTasksController extends BaseController {
 
     @FXML
     protected void refreshTasks() {
-        tasksTable.getItems().clear();
         loadAssignedTasks();
     }
 
@@ -55,27 +54,24 @@ public class EngineerTasksController extends BaseController {
             }
 
             TaskManager taskManager = context.getTaskManager();
-            List<Task> allTasks = taskManager.getAllTasks();
-
-            List<Task> assignedTasks = allTasks.stream()
-                    .filter(task -> task.getAssignedEngineer() != null)
-                    .filter(task -> task.getAssignedEngineer().getId().equals(currentEngineer.getId()))
-                    .toList();
-
-            if (assignedTasks.isEmpty()) {
-                showEmptyState();
-            } else {
-                tasksTable.getItems().setAll(
-                        assignedTasks.stream()
-                                .map(TaskDisplay::new)
-                                .toList());
-
-                UiUtils.setVisibility(tasksTable, true);
-                UiUtils.setVisibility(emptyStateLabel, false);
-            }
+            List<Task> assignedTasks = taskManager.getTasksForEngineer(currentEngineer);
+            loadTasksInTable(assignedTasks);
         } catch (Exception e) {
             showEmptyState();
             navigator.notify("Error loading assigned tasks: " + e.getMessage());
+        }
+    }
+
+    private void loadTasksInTable(List<Task> tasks) {
+        if (tasks == null || tasks.isEmpty()) {
+            showEmptyState();
+        } else {
+            tasksTable.getItems().setAll(
+                    tasks.stream()
+                            .map(TaskDisplay::new)
+                            .toList());
+            UiUtils.setVisibility(tasksTable, true);
+            UiUtils.setVisibility(emptyStateLabel, false);
         }
     }
 

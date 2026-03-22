@@ -267,10 +267,10 @@ public class TaskManager {
             case BLOCKED:
                 blockedTaskIds.add(taskId);
                 break;
-            case TO_DO:
+            case DONE:
                 readyTasks.offer(task);
                 break;
-            case DONE:
+            case TO_DO:
                 break;
         }
     }
@@ -282,8 +282,58 @@ public class TaskManager {
             allTasks.put(task.getUlid(), task);
         }
 
+        refreshAllTaskStates();
+    }
+
+    public void refreshAllTaskStates() {
+        inProgressTaskIds.clear();
+        blockedTaskIds.clear();
+        readyTasks.clear();
+
         for (Task task : allTasks.values()) {
+            task.refreshStatusFromDependencies();
             updateCollections(task);
         }
+    }
+
+    public List<Task> getReadyTasks() {
+        return new ArrayList<>(readyTasks);
+    }
+
+    public List<Task> getInProgressTasks() {
+        List<Task> inProgressTasks = new ArrayList<>();
+        for (Ulid taskId : inProgressTaskIds) {
+            Task task = allTasks.get(taskId);
+            if (task != null) {
+                inProgressTasks.add(task);
+            }
+        }
+        return inProgressTasks;
+    }
+
+    public List<Task> getBlockedTasks() {
+        List<Task> blockedTasks = new ArrayList<>();
+        for (Ulid taskId : blockedTaskIds) {
+            Task task = allTasks.get(taskId);
+            if (task != null) {
+                blockedTasks.add(task);
+            }
+        }
+        return blockedTasks;
+    }
+
+    public List<Task> getTasksForEngineer(Engineer engineer) {
+        if (engineer == null) {
+            throw new IllegalArgumentException("Engineer cannot be null");
+        }
+
+        List<Task> engineerTasks = new ArrayList<>();
+        for (Task task : allTasks.values()) {
+            Engineer assigned = task.getAssignedEngineer();
+            if (assigned != null && assigned.getId().equals(engineer.getId())) {
+                engineerTasks.add(task);
+            }
+        }
+        return engineerTasks;
     }
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -29,6 +30,13 @@
                             onAction="#goToAddTask"
                             styleClass="primary-button,add-button-small"/>
                 </HBox>
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Label text="Filter:" styleClass="page-subtitle"/>
+                <ChoiceBox fx:id="filterChoiceBox"
+                           prefWidth="150">
+                </ChoiceBox>
             </HBox>
 
             <Label fx:id="emptyStateLabel"
