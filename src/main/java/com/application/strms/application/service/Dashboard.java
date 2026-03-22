@@ -1,12 +1,12 @@
-package com.application.strms.presentation.service;
+package com.application.strms.application.service;
 
-import com.application.strms.application.service.TaskManager;
 import com.application.strms.domain.model.Engineer;
 import com.application.strms.domain.model.TaskStatus;
 import com.application.strms.domain.repository.UserRepository;
 
-public class Dashboard {
+import java.time.LocalDateTime;
 
+public class Dashboard {
     private final TaskManager taskManager;
     private final UserRepository userRepository;
 
@@ -56,6 +56,14 @@ public class Dashboard {
     public int getEngineersCount() {
         return (int) userRepository.getAllUsers().stream()
                 .filter(user -> user instanceof Engineer)
+                .count();
+    }
+
+    public int getOverdueTasks() {
+        LocalDateTime now = LocalDateTime.now();
+        return (int) taskManager.getAllTasks().stream()
+                .filter(task -> task.getDeadline() != null && task.getDeadline().isBefore(now))
+                .filter(task -> task.getStatus() != TaskStatus.DONE)
                 .count();
     }
 }

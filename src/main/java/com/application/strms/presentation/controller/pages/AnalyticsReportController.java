@@ -1,18 +1,12 @@
 package com.application.strms.presentation.controller.pages;
 
-import com.application.strms.application.service.TaskManager;
-import com.application.strms.domain.model.*;
-import com.application.strms.domain.repository.UserRepository;
+import com.application.strms.application.service.Dashboard;
+import com.application.strms.application.service.ReportGenerator;
 import com.application.strms.presentation.controller.BaseController;
-import com.application.strms.presentation.service.Dashboard;
-import com.application.strms.presentation.service.ReportGenerator;
-import com.application.strms.presentation.service.NotificationManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-
-import java.time.LocalDateTime;
 
 public class AnalyticsReportController extends BaseController {
 
@@ -39,9 +33,6 @@ public class AnalyticsReportController extends BaseController {
     private TextArea reportTextArea;
 
     private ReportGenerator reportGenerator;
-    private NotificationManager notificationManager;
-    private TaskManager taskManager;
-    private UserRepository userRepository;
     private Dashboard dashboard;
 
     private static final String REPORT_COMPREHENSIVE = "Comprehensive Report";
@@ -54,14 +45,10 @@ public class AnalyticsReportController extends BaseController {
     @Override
     protected void onReady() {
         reportGenerator = context.getReportGenerator();
-        notificationManager = context.getNotificationManager();
-        taskManager = context.getTaskManager();
-        userRepository = context.getApplicationUserRepository();
-        dashboard = new Dashboard(taskManager, userRepository);
+        dashboard = context.getDashboard();
 
         initializeReportCombo();
         loadStatistics();
-        notifyOverdueTasksIfAny();
     }
 
     private void initializeReportCombo() {
@@ -83,22 +70,7 @@ public class AnalyticsReportController extends BaseController {
         doneTasksLabel.setText(String.valueOf(dashboard.getDoneTasks()));
         totalUsersLabel.setText(String.valueOf(dashboard.getTotalUsers()));
         engineersLabel.setText(String.valueOf(dashboard.getEngineersCount()));
-
-        LocalDateTime now = LocalDateTime.now();
-        long overdueCount = taskManager.getAllTasks().stream()
-                .filter(task -> task.getDeadline() != null && task.getDeadline().isBefore(now))
-                .filter(task -> task.getStatus() != TaskStatus.DONE)
-                .count();
-        overdueTasksLabel.setText(String.valueOf(overdueCount));
-    }
-
-    private void notifyOverdueTasksIfAny() {
-        LocalDateTime now = LocalDateTime.now();
-
-        taskManager.getAllTasks().stream()
-                .filter(task -> task.getDeadline() != null && task.getDeadline().isBefore(now))
-                .filter(task -> task.getStatus() != TaskStatus.DONE)
-                .forEach(notificationManager::notifyDeadline);
+        overdueTasksLabel.setText(String.valueOf(dashboard.getOverdueTasks()));
     }
 
     @FXML
@@ -110,16 +82,16 @@ public class AnalyticsReportController extends BaseController {
         }
 
         String reportContent = switch (selectedReport) {
-            case REPORT_COMPREHENSIVE -> reportGenerator.generateComprehensiveReport(taskManager, userRepository);
-            case REPORT_TASK -> reportGenerator.generateTaskReport(taskManager);
-            case REPORT_USER -> reportGenerator.generateUserReport(userRepository);
-            case REPORT_OVERDUE -> reportGenerator.generateOverdueTasksReport(taskManager);
-            case REPORT_PRIORITY -> reportGenerator.generateTasksByPriorityReport(taskManager);
-            case REPORT_STATUS -> reportGenerator.generateTasksByStatusReport(taskManager);
-            default -> reportGenerator.generateReport();
+            case REPORT_COMPREHENSIVE -> reportGenerator.generateComprehensiveReport(context.getTaskManager(),
+                    context.getApplicationUserRepository());
+            case REPORT_TASK -> reportGenerator.generateTaskReport(context.getTaskManager());
+            case REPORT_USER -> reportGenerator.generateUserReport(context.getApplicationUserRepository());
+            case REPORT_OVERDUE -> reportGenerator.generateOverdueTasksReport(context.getTaskManager());
+            case REPORT_PRIORITY -> reportGenerator.generateTasksByPriorityReport(context.getTaskManager());
+            case REPORT_STATUS -> reportGenerator.generateTasksByStatusReport(context.getTaskManager());
+            default -> "No report available.";
         };
 
         reportTextArea.setText(reportContent);
     }
-
 }

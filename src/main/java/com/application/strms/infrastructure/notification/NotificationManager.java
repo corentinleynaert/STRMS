@@ -1,5 +1,6 @@
-package com.application.strms.presentation.service;
+package com.application.strms.infrastructure.notification;
 
+import com.application.strms.application.service.NotificationService;
 import com.application.strms.domain.model.Engineer;
 import com.application.strms.domain.model.NotificationType;
 import com.application.strms.domain.model.Task;
@@ -7,7 +8,7 @@ import com.application.strms.domain.model.TaskStatus;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class NotificationManager {
+public class NotificationManager implements NotificationService {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public void notify(Task task, NotificationType type, String message) {
@@ -37,6 +38,12 @@ public class NotificationManager {
         }
     }
 
+    @Override
+    public void notify(Task task, String message) {
+        notify(task, NotificationType.CONSOLE, message);
+    }
+
+    @Override
     public void notifyAssignment(Task task, Engineer engineer) {
         if (task == null) {
             throw new IllegalArgumentException("Task cannot be null");
@@ -54,6 +61,7 @@ public class NotificationManager {
         notify(task, NotificationType.CONSOLE, message);
     }
 
+    @Override
     public void notifyStatusChange(Task task, TaskStatus newStatus) {
         if (task == null) {
             throw new IllegalArgumentException("Task cannot be null");
@@ -71,6 +79,7 @@ public class NotificationManager {
         notify(task, NotificationType.CONSOLE, message);
     }
 
+    @Override
     public void notifyDeadline(Task task) {
         if (task == null) {
             throw new IllegalArgumentException("Task cannot be null");

@@ -1,6 +1,5 @@
-package com.application.strms.presentation.service;
+package com.application.strms.application.service;
 
-import com.application.strms.application.service.TaskManager;
 import com.application.strms.domain.model.*;
 import com.application.strms.domain.repository.UserRepository;
 
@@ -9,8 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ReportGenerator implements Reportable {
-
+public class ReportGenerator {
     public String generateTaskReport(TaskManager taskManager) {
         StringBuilder report = new StringBuilder();
         report.append("===== TASK REPORT =====\n\n");
@@ -144,12 +142,6 @@ public class ReportGenerator implements Reportable {
 
         report.append("===========================\n");
         return report.toString();
-    }
-
-    @Override
-    public String generateReport() {
-        return "Use generateTaskReport(), generateUserReport(), generateOverdueTasksReport(), " +
-                "generateTasksByPriorityReport(), or generateTasksByStatusReport() for detailed reports.";
     }
 
     public String generateComprehensiveReport(TaskManager taskManager, UserRepository userRepository) {

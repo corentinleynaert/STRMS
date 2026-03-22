@@ -16,7 +16,6 @@ import com.application.strms.domain.model.TaskStatus;
 import com.application.strms.domain.model.Ulid;
 import com.application.strms.domain.model.User;
 import com.application.strms.domain.repository.TaskRepository;
-import com.application.strms.presentation.service.NotificationManager;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -31,22 +30,22 @@ import java.util.Set;
 
 public class TaskManager {
     private final TaskRepository taskRepository;
-    private final NotificationManager notificationManager;
+    private final NotificationService notificationService;
     private final Map<Ulid, Task> allTasks = new HashMap<>();
     private final Set<Ulid> inProgressTaskIds = new HashSet<>();
     private final Set<Ulid> blockedTaskIds = new HashSet<>();
     private final PriorityQueue<Task> readyTasks = new PriorityQueue<>();
 
-    public TaskManager(TaskRepository taskRepository, NotificationManager notificationManager) throws IOException {
+    public TaskManager(TaskRepository taskRepository, NotificationService notificationService) throws IOException {
         if (taskRepository == null) {
             throw new IllegalArgumentException("Task repository cannot be null");
         }
-        if (notificationManager == null) {
-            throw new IllegalArgumentException("NotificationManager cannot be null");
+        if (notificationService == null) {
+            throw new IllegalArgumentException("NotificationService cannot be null");
         }
 
         this.taskRepository = taskRepository;
-        this.notificationManager = notificationManager;
+        this.notificationService = notificationService;
         loadTasks();
     }
 
@@ -192,7 +191,7 @@ public class TaskManager {
             taskRepository.update(task);
             updateCollections(task);
             if (engineer != null) {
-                notificationManager.notifyAssignment(task, engineer);
+                notificationService.notifyAssignment(task, engineer);
             }
             return UpdateTaskResult.success();
         } catch (IOException e) {
@@ -271,7 +270,11 @@ public class TaskManager {
             addHistoryEntry(task, "Status changed", "status", oldStatus.toString(), newStatus.toString(), currentUser);
             taskRepository.update(task);
             updateCollections(task);
-            notificationManager.notifyStatusChange(task, newStatus);
+            notificationService.notifyStatusChange(task, newStatus);
+            if (task.getDeadline() != null && task.getDeadline().isBefore(LocalDateTime.now())
+                    && task.getStatus() != TaskStatus.DONE) {
+                notificationService.notifyDeadline(task);
+            }
             return UpdateTaskResult.success();
         } catch (IOException e) {
             throw e;
@@ -290,7 +293,7 @@ public class TaskManager {
                     currentUser);
             taskRepository.update(task);
             updateCollections(task);
-            notificationManager.notifyStatusChange(task, TaskStatus.DONE);
+            notificationService.notifyStatusChange(task, TaskStatus.DONE);
             return UpdateTaskResult.success();
         } catch (IOException e) {
             throw e;
