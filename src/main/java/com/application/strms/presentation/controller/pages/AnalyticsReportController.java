@@ -77,25 +77,21 @@ public class AnalyticsReportController extends BaseController {
         List<Task> allTasks = getAllTasks();
         List<User> allUsers = userRepository.getAllUsers();
 
-        // Count tasks by status
         long todoCount = taskManager.getReadyTasks().size();
         long inProgressCount = taskManager.getInProgressTasks().size();
         long blockedCount = taskManager.getBlockedTasks().size();
         long doneCount = 0;
 
-        // Count overdue tasks
         LocalDateTime now = LocalDateTime.now();
         long overdueCount = allTasks.stream()
                 .filter(task -> task.getDeadline() != null && task.getDeadline().isBefore(now))
                 .filter(task -> task.getStatus() != TaskStatus.DONE)
                 .count();
 
-        // Count engineers
         long engineerCount = allUsers.stream()
                 .filter(u -> u instanceof Engineer)
                 .count();
 
-        // Update labels
         totalTasksLabel.setText(String.valueOf(allTasks.size()));
         inProgressTasksLabel.setText(String.valueOf(inProgressCount));
         blockedTasksLabel.setText(String.valueOf(blockedCount));

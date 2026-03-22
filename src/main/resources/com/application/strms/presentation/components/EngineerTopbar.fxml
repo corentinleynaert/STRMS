@@ -22,6 +22,9 @@
             <Button text="My Tasks"
                     onAction="#goToMyTasks"
                     styleClass="topbar-nav-button"/>
+            <Button text="Analytics"
+                    onAction="#goToAnalytics"
+                    styleClass="topbar-nav-button"/>
         </HBox>
     </left>
 

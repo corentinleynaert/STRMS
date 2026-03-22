@@ -15,6 +15,11 @@ public class AdminTopbarController extends TopbarController {
     }
 
     @FXML
+    protected void goToAnalytics() {
+        navigator.goTo(UiConstants.Pages.ANALYTICS_REPORT);
+    }
+
+    @FXML
     protected void logout() {
         super.logout();
     }

@@ -17,6 +17,7 @@ public final class UiConstants {
         public static final String UPDATE_TASK = "UpdateTask";
         public static final String ENGINEER_TASKS = "EngineerTasks";
         public static final String ENGINEER_TASK_DETAILS = "EngineerTaskDetails";
+        public static final String ANALYTICS_REPORT = "AnalyticsReport";
 
         private Pages() {
             throw new AssertionError("Utility class");

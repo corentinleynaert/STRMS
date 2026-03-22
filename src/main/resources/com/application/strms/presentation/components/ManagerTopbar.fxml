@@ -13,7 +13,7 @@
     <left>
         <HBox alignment="CENTER_LEFT" spacing="32" styleClass="topbar-left">
             <padding>
-                <Insets left="0" right="0" top="0" bottom="0"/>
+                <Insets />
             </padding>
             <Label text="STRMS" styleClass="topbar-brand"/>
             <Button text="Dashboard"
@@ -21,6 +21,9 @@
                     styleClass="topbar-nav-button"/>
             <Button text="Tasks"
                     onAction="#goToTasks"
+                    styleClass="topbar-nav-button"/>
+            <Button text="Analytics"
+                    onAction="#goToAnalytics"
                     styleClass="topbar-nav-button"/>
         </HBox>
     </left>
@@ -32,7 +35,7 @@
     <right>
         <HBox alignment="CENTER_RIGHT" spacing="16" styleClass="topbar-right">
             <padding>
-                <Insets left="0" right="0" top="0" bottom="0"/>
+                <Insets />
             </padding>
             <Button text="Logout"
                     onAction="#logout"

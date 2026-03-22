@@ -159,13 +159,6 @@ public class ReportGenerator implements Reportable {
                 "generateTasksByPriorityReport(), or generateTasksByStatusReport() for detailed reports.";
     }
 
-    /**
-     * Generates a comprehensive summary report of all task and user statistics.
-     *
-     * @param taskManager    the task manager
-     * @param userRepository the user repository
-     * @return a comprehensive summary report
-     */
     public String generateComprehensiveReport(TaskManager taskManager, UserRepository userRepository) {
         StringBuilder report = new StringBuilder();
         report.append("===== COMPREHENSIVE REPORT =====\n\n");

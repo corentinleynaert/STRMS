@@ -31,7 +31,6 @@
                 <javafx.scene.layout.ColumnConstraints percentWidth="25"/>
             </columnConstraints>
 
-            <!-- Total Tasks -->
             <VBox styleClass="stat-card" GridPane.columnIndex="0" GridPane.rowIndex="0">
                 <padding>
                     <Insets top="15" right="15" bottom="15" left="15"/>
@@ -40,7 +39,6 @@
                 <Label fx:id="totalTasksLabel" text="0" styleClass="stat-value"/>
             </VBox>
 
-            <!-- Tasks in Progress -->
             <VBox styleClass="stat-card" GridPane.columnIndex="1" GridPane.rowIndex="0">
                 <padding>
                     <Insets top="15" right="15" bottom="15" left="15"/>
@@ -49,7 +47,6 @@
                 <Label fx:id="inProgressTasksLabel" text="0" styleClass="stat-value"/>
             </VBox>
 
-            <!-- Blocked Tasks -->
             <VBox styleClass="stat-card" GridPane.columnIndex="2" GridPane.rowIndex="0">
                 <padding>
                     <Insets top="15" right="15" bottom="15" left="15"/>
@@ -58,7 +55,6 @@
                 <Label fx:id="blockedTasksLabel" text="0" styleClass="stat-value"/>
             </VBox>
 
-            <!-- Overdue Tasks -->
             <VBox styleClass="stat-card stat-card-warning" GridPane.columnIndex="3" GridPane.rowIndex="0">
                 <padding>
                     <Insets top="15" right="15" bottom="15" left="15"/>
@@ -67,7 +63,6 @@
                 <Label fx:id="overdueTasksLabel" text="0" styleClass="stat-value"/>
             </VBox>
 
-            <!-- Total Users -->
             <VBox styleClass="stat-card" GridPane.columnIndex="0" GridPane.rowIndex="1">
                 <padding>
                     <Insets top="15" right="15" bottom="15" left="15"/>
@@ -76,7 +71,6 @@
                 <Label fx:id="totalUsersLabel" text="0" styleClass="stat-value"/>
             </VBox>
 
-            <!-- Engineers -->
             <VBox styleClass="stat-card" GridPane.columnIndex="1" GridPane.rowIndex="1">
                 <padding>
                     <Insets top="15" right="15" bottom="15" left="15"/>
@@ -85,7 +79,6 @@
                 <Label fx:id="engineersLabel" text="0" styleClass="stat-value"/>
             </VBox>
 
-            <!-- To Do Tasks -->
             <VBox styleClass="stat-card" GridPane.columnIndex="2" GridPane.rowIndex="1">
                 <padding>
                     <Insets top="15" right="15" bottom="15" left="15"/>
@@ -94,7 +87,6 @@
                 <Label fx:id="todoTasksLabel" text="0" styleClass="stat-value"/>
             </VBox>
 
-            <!-- Done Tasks -->
             <VBox styleClass="stat-card" GridPane.columnIndex="3" GridPane.rowIndex="1">
                 <padding>
                     <Insets top="15" right="15" bottom="15" left="15"/>
@@ -107,18 +99,15 @@
 
     <Separator styleClass="separator"/>
 
-    <!-- Reports Section -->
     <VBox spacing="15" styleClass="reports-section">
         <Label text="Reports" styleClass="section-title"/>
 
-        <!-- Report Selection -->
         <HBox spacing="10" alignment="CENTER_LEFT">
             <Label text="Select Report:" styleClass="label-regular"/>
             <ComboBox fx:id="reportTypeCombo" prefWidth="250" styleClass="combo-box"/>
             <Button text="Generate" onAction="#generateReport" styleClass="button-primary"/>
         </HBox>
 
-        <!-- Report Display -->
         <Label text="Report Output:" styleClass="label-regular"/>
         <TextArea fx:id="reportTextArea" 
                   wrapText="true"
