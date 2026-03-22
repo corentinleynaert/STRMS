@@ -65,7 +65,7 @@ public class NotificationManager {
         String message = String.format(
                 "Task \"%s\" (ID: %s) status changed to %s",
                 task.getTitle(),
-                task.getUlid(),
+                task.getUlid().toString(),
                 newStatus);
 
         notify(task, NotificationType.CONSOLE, message);
@@ -109,7 +109,8 @@ public class NotificationManager {
 
     private void notifyConsole(Task task, String message) {
         String timestamp = LocalDateTime.now().format(DATE_FORMATTER);
-        System.out.println("[NOTIFICATION][CONSOLE] [" + timestamp + "] " + message);
+        String taskTitle = task != null ? task.getTitle() : "Unknown Task";
+        System.out.println("[NOTIFICATION][CONSOLE] [" + timestamp + "] Task \"" + taskTitle + "\": " + message);
     }
 
     private void notifyEmail(Task task, String message) {
