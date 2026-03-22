@@ -207,7 +207,7 @@ public class TaskManager {
             Task task = findTaskOrThrow(taskId);
             Engineer oldEngineer = task.getAssignedEngineer();
             String oldEngineerValue = oldEngineer != null ? oldEngineer.getName() : "null";
-            
+
             task.unassignEngineer(currentUser);
             addHistoryEntry(task, "Task unassigned", "assignedEngineer", oldEngineerValue, "null", currentUser);
             taskRepository.update(task);
@@ -261,8 +261,8 @@ public class TaskManager {
             try {
                 task.updateStatus(newStatus, currentUser);
             } catch (DependencyNotCompletedException e) {
-                addHistoryEntry(task, 
-                        "Attempt to start task rejected: dependencies not completed", 
+                addHistoryEntry(task,
+                        "Attempt to start task rejected: dependencies not completed",
                         "status", oldStatus.toString(), newStatus.toString(), currentUser);
                 taskRepository.update(task);
                 throw e;
@@ -353,13 +353,11 @@ public class TaskManager {
                 blockedTaskIds.add(taskId);
                 break;
             case TO_DO:
-                // Only add TO_DO tasks with all dependencies completed to readyTasks
                 if (task.getDependencies().isEmpty() || areAllDependenciesCompleted(task)) {
                     readyTasks.offer(task);
                 }
                 break;
             case DONE:
-                // DONE tasks should not be in any collection
                 break;
         }
     }

@@ -4,6 +4,7 @@ import com.application.strms.application.service.TaskManager;
 import com.application.strms.domain.model.*;
 import com.application.strms.domain.repository.UserRepository;
 import com.application.strms.presentation.controller.BaseController;
+import com.application.strms.presentation.service.Dashboard;
 import com.application.strms.presentation.service.ReportGenerator;
 import com.application.strms.presentation.service.NotificationManager;
 import javafx.fxml.FXML;
@@ -12,7 +13,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class AnalyticsReportController extends BaseController {
 
@@ -42,6 +42,7 @@ public class AnalyticsReportController extends BaseController {
     private NotificationManager notificationManager;
     private TaskManager taskManager;
     private UserRepository userRepository;
+    private Dashboard dashboard;
 
     private static final String REPORT_COMPREHENSIVE = "Comprehensive Report";
     private static final String REPORT_TASK = "Task Report";
@@ -56,6 +57,7 @@ public class AnalyticsReportController extends BaseController {
         notificationManager = context.getNotificationManager();
         taskManager = context.getTaskManager();
         userRepository = context.getApplicationUserRepository();
+        dashboard = new Dashboard(taskManager, userRepository);
 
         initializeReportCombo();
         loadStatistics();
@@ -74,39 +76,26 @@ public class AnalyticsReportController extends BaseController {
     }
 
     private void loadStatistics() {
-        List<Task> allTasks = getAllTasks();
-        List<User> allUsers = userRepository.getAllUsers();
-
-        long todoCount = taskManager.getReadyTasks().size();
-        long inProgressCount = taskManager.getInProgressTasks().size();
-        long blockedCount = taskManager.getBlockedTasks().size();
-        long doneCount = 0;
+        totalTasksLabel.setText(String.valueOf(dashboard.getTotalTasks()));
+        todoTasksLabel.setText(String.valueOf(dashboard.getTodoTasks()));
+        inProgressTasksLabel.setText(String.valueOf(dashboard.getInProgressTasks()));
+        blockedTasksLabel.setText(String.valueOf(dashboard.getBlockedTasks()));
+        doneTasksLabel.setText(String.valueOf(dashboard.getDoneTasks()));
+        totalUsersLabel.setText(String.valueOf(dashboard.getTotalUsers()));
+        engineersLabel.setText(String.valueOf(dashboard.getEngineersCount()));
 
         LocalDateTime now = LocalDateTime.now();
-        long overdueCount = allTasks.stream()
+        long overdueCount = taskManager.getAllTasks().stream()
                 .filter(task -> task.getDeadline() != null && task.getDeadline().isBefore(now))
                 .filter(task -> task.getStatus() != TaskStatus.DONE)
                 .count();
-
-        long engineerCount = allUsers.stream()
-                .filter(u -> u instanceof Engineer)
-                .count();
-
-        totalTasksLabel.setText(String.valueOf(allTasks.size()));
-        inProgressTasksLabel.setText(String.valueOf(inProgressCount));
-        blockedTasksLabel.setText(String.valueOf(blockedCount));
         overdueTasksLabel.setText(String.valueOf(overdueCount));
-        totalUsersLabel.setText(String.valueOf(allUsers.size()));
-        engineersLabel.setText(String.valueOf(engineerCount));
-        todoTasksLabel.setText(String.valueOf(todoCount));
-        doneTasksLabel.setText(String.valueOf(doneCount));
     }
 
     private void notifyOverdueTasksIfAny() {
-        List<Task> allTasks = getAllTasks();
         LocalDateTime now = LocalDateTime.now();
 
-        allTasks.stream()
+        taskManager.getAllTasks().stream()
                 .filter(task -> task.getDeadline() != null && task.getDeadline().isBefore(now))
                 .filter(task -> task.getStatus() != TaskStatus.DONE)
                 .forEach(notificationManager::notifyDeadline);
@@ -133,10 +122,4 @@ public class AnalyticsReportController extends BaseController {
         reportTextArea.setText(reportContent);
     }
 
-    private List<Task> getAllTasks() {
-        List<Task> allTasks = taskManager.getReadyTasks();
-        allTasks.addAll(taskManager.getInProgressTasks());
-        allTasks.addAll(taskManager.getBlockedTasks());
-        return allTasks;
-    }
 }

@@ -167,10 +167,15 @@ public class ReportGenerator implements Reportable {
                 .append("\n\n");
 
         report.append("TASK STATUS BREAKDOWN\n");
-        report.append("- TO_DO: ").append(taskManager.getReadyTasks().size()).append("\n");
-        report.append("- IN_PROGRESS: ").append(taskManager.getInProgressTasks().size()).append("\n");
-        report.append("- BLOCKED: ").append(taskManager.getBlockedTasks().size()).append("\n");
-        report.append("- DONE: ").append(allTasks.stream().filter(t -> t.getStatus() == TaskStatus.DONE).count()).append("\n");
+        long todoCount = allTasks.stream().filter(t -> t.getStatus() == TaskStatus.TO_DO).count();
+        long inProgressCount = allTasks.stream().filter(t -> t.getStatus() == TaskStatus.IN_PROGRESS).count();
+        long blockedCount = allTasks.stream().filter(t -> t.getStatus() == TaskStatus.BLOCKED).count();
+        long doneCount = allTasks.stream().filter(t -> t.getStatus() == TaskStatus.DONE).count();
+
+        report.append("- TO_DO: ").append(todoCount).append("\n");
+        report.append("- IN_PROGRESS: ").append(inProgressCount).append("\n");
+        report.append("- BLOCKED: ").append(blockedCount).append("\n");
+        report.append("- DONE: ").append(doneCount).append("\n");
 
         LocalDateTime now = LocalDateTime.now();
         long overdueCount = allTasks.stream()
