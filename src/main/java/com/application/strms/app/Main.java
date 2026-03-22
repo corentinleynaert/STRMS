@@ -14,6 +14,7 @@ import com.application.strms.infrastructure.security.BCryptPasswordHasher;
 import com.application.strms.presentation.controller.LayoutController;
 import com.application.strms.presentation.navigation.Navigator;
 import com.application.strms.presentation.loader.ViewLoader;
+import com.application.strms.presentation.service.NotificationManager;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -31,10 +32,11 @@ public class Main extends Application {
         TaskRepository taskRepository = new FileTaskRepository(fileHandler, userRepository);
         PasswordHasher passwordHasher = new BCryptPasswordHasher();
         AuthService authService = new AuthService(userRepository, passwordHasher);
-        TaskManager taskManager = new TaskManager(taskRepository);
+        NotificationManager notificationManager = new NotificationManager();
+        TaskManager taskManager = new TaskManager(taskRepository, notificationManager);
         SessionManager sessionManager = new SessionManager();
         ApplicationContext applicationContext = new ApplicationContext(authService, sessionManager, userRepository,
-                taskManager);
+                taskManager, notificationManager);
 
         FXMLLoader loader = ViewLoader.load("Layout");
         Parent root = loader.load();
