@@ -150,7 +150,7 @@ public class UsersController extends BaseController {
 
             if (result.isSuccess()) {
                 navigator.notify("User succesfully deleted !");
-                usersTable.getItems().remove(user);
+                usersTable.getItems().removeIf(userDisplay -> userDisplay.getUser().getId().equals(user.getId()));
                 if (usersTable.getItems().isEmpty()) {
                     showEmptyState();
                 }

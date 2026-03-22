@@ -2,11 +2,14 @@ package com.application.strms.app;
 
 import com.application.strms.application.ApplicationContext;
 import com.application.strms.application.service.AuthService;
+import com.application.strms.application.service.TaskManager;
 import com.application.strms.application.session.SessionManager;
 import com.application.strms.domain.repository.UserRepository;
+import com.application.strms.domain.repository.TaskRepository;
 import com.application.strms.domain.service.PasswordHasher;
 import com.application.strms.infrastructure.persistence.FileHandler;
 import com.application.strms.infrastructure.repository.FileUserRepository;
+import com.application.strms.infrastructure.repository.FileTaskRepository;
 import com.application.strms.infrastructure.security.BCryptPasswordHasher;
 import com.application.strms.presentation.controller.LayoutController;
 import com.application.strms.presentation.navigation.Navigator;
@@ -26,10 +29,13 @@ public class Main extends Application {
         try {
             FileHandler fileHandler = new FileHandler();
             UserRepository userRepository = new FileUserRepository(fileHandler);
+            TaskRepository taskRepository = new FileTaskRepository(fileHandler);
             PasswordHasher passwordHasher = new BCryptPasswordHasher();
             AuthService authService = new AuthService(userRepository, passwordHasher);
+            TaskManager taskManager = new TaskManager(taskRepository);
             SessionManager sessionManager = new SessionManager();
-            ApplicationContext applicationContext = new ApplicationContext(authService, sessionManager, userRepository);
+            ApplicationContext applicationContext = new ApplicationContext(authService, sessionManager, userRepository,
+                    taskManager);
 
             FXMLLoader loader = ViewLoader.load("Layout");
             Parent root = loader.load();

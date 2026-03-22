@@ -22,21 +22,40 @@ public class Task implements Comparable<Task> {
     private final List<TaskHistoryEntry> history;
 
     public Task(String title,
-                String description,
-                PriorityLevel priority,
-                TaskCategory category,
-                LocalDateTime deadline) {
+            String description,
+            PriorityLevel priority,
+            TaskCategory category,
+            LocalDateTime deadline) {
 
-        if (title == null || title.isBlank()) throw new IllegalArgumentException("Title cannot be empty");
-        if (description == null) throw new IllegalArgumentException("Description cannot be null");
-        if (priority == null) throw new IllegalArgumentException("Priority cannot be null");
-        if (category == null) throw new IllegalArgumentException("Category cannot be null");
+        this(new Ulid(), title, description, priority, category, TaskStatus.TO_DO, deadline);
+    }
 
-        this.ulid = new Ulid();
+    public Task(Ulid ulid,
+            String title,
+            String description,
+            PriorityLevel priority,
+            TaskCategory category,
+            TaskStatus status,
+            LocalDateTime deadline) {
+
+        if (ulid == null)
+            throw new IllegalArgumentException("Ulid cannot be null");
+        if (title == null || title.isBlank())
+            throw new IllegalArgumentException("Title cannot be empty");
+        if (description == null)
+            throw new IllegalArgumentException("Description cannot be null");
+        if (priority == null)
+            throw new IllegalArgumentException("Priority cannot be null");
+        if (category == null)
+            throw new IllegalArgumentException("Category cannot be null");
+        if (status == null)
+            throw new IllegalArgumentException("Status cannot be null");
+
+        this.ulid = ulid;
         this.title = title;
         this.description = description;
         this.priority = priority;
-        this.status = TaskStatus.TO_DO;
+        this.status = status;
         this.category = category;
         this.assignedEngineer = null;
         this.deadline = deadline;
@@ -87,25 +106,41 @@ public class Task implements Comparable<Task> {
 
     public void updateTitle(String title, User actor) {
         validatePermission(actor, "canUpdateTask");
-        if (title == null || title.isBlank()) throw new IllegalArgumentException("Title cannot be empty");
+        if (title == null || title.isBlank())
+            throw new IllegalArgumentException("Title cannot be empty");
         this.title = title;
     }
 
     public void updateDescription(String description, User actor) {
         validatePermission(actor, "canUpdateTask");
-        if (description == null) throw new IllegalArgumentException("Description cannot be null");
+        if (description == null)
+            throw new IllegalArgumentException("Description cannot be null");
         this.description = description;
     }
 
     public void changePriority(PriorityLevel priority, User actor) {
         validatePermission(actor, "canUpdateTask");
-        if (priority == null) throw new IllegalArgumentException("Priority cannot be null");
+        if (priority == null)
+            throw new IllegalArgumentException("Priority cannot be null");
         this.priority = priority;
+    }
+
+    public void updateCategory(TaskCategory category, User actor) {
+        validatePermission(actor, "canUpdateTask");
+        if (category == null)
+            throw new IllegalArgumentException("Category cannot be null");
+        this.category = category;
+    }
+
+    public void updateDeadline(LocalDateTime deadline, User actor) {
+        validatePermission(actor, "canUpdateTask");
+        this.deadline = deadline;
     }
 
     public void assignEngineer(Engineer engineer, User actor) {
         validatePermission(actor, "canAssignTask");
-        if (engineer == null) throw new IllegalArgumentException("Engineer cannot be null");
+        if (engineer == null)
+            throw new IllegalArgumentException("Engineer cannot be null");
         this.assignedEngineer = engineer;
     }
 
@@ -116,19 +151,31 @@ public class Task implements Comparable<Task> {
 
     public void addDependency(Task dependency, User actor) {
         validatePermission(actor, "canUpdateTask");
-        if (dependency == null) throw new IllegalArgumentException("Dependency cannot be null");
-        if (dependency == this) throw new IllegalArgumentException("A task cannot depend on itself");
-        if (dependencies.contains(dependency)) throw new IllegalArgumentException("Dependency already exists");
-        if (dependency.dependsOn(this)) throw new IllegalArgumentException("Circular dependency detected");
+        if (dependency == null)
+            throw new IllegalArgumentException("Dependency cannot be null");
+        if (dependency == this)
+            throw new IllegalArgumentException("A task cannot depend on itself");
+        if (dependencies.contains(dependency))
+            throw new IllegalArgumentException("Dependency already exists");
+        if (dependency.dependsOn(this))
+            throw new IllegalArgumentException("Circular dependency detected");
 
         dependencies.add(dependency);
         refreshStatusFromDependencies();
     }
 
+    public void addDependencyUnchecked(Task dependency) {
+        if (dependency != null && !dependencies.contains(dependency)) {
+            dependencies.add(dependency);
+        }
+    }
+
     public void removeDependency(Task dependency, User actor) {
         validatePermission(actor, "canUpdateTask");
-        if (dependency == null) throw new IllegalArgumentException("Dependency cannot be null");
-        if (!dependencies.contains(dependency)) throw new IllegalArgumentException("Dependency does not exist");
+        if (dependency == null)
+            throw new IllegalArgumentException("Dependency cannot be null");
+        if (!dependencies.contains(dependency))
+            throw new IllegalArgumentException("Dependency does not exist");
 
         dependencies.remove(dependency);
         refreshStatusFromDependencies();
@@ -136,7 +183,8 @@ public class Task implements Comparable<Task> {
 
     public void updateStatus(TaskStatus newStatus, User actor) {
         validatePermission(actor, "canChangeTaskStatus");
-        if (newStatus == null) throw new IllegalArgumentException("Status cannot be null");
+        if (newStatus == null)
+            throw new IllegalArgumentException("Status cannot be null");
 
         if (status == TaskStatus.DONE && newStatus != TaskStatus.DONE) {
             throw new IllegalArgumentException("Cannot revert a completed task");
@@ -158,12 +206,14 @@ public class Task implements Comparable<Task> {
     }
 
     public void addHistoryEntry(TaskHistoryEntry entry) {
-        if (entry == null) throw new IllegalArgumentException("History entry cannot be null");
+        if (entry == null)
+            throw new IllegalArgumentException("History entry cannot be null");
         history.add(entry);
     }
 
     private void refreshStatusFromDependencies() {
-        if (status == TaskStatus.DONE) return;
+        if (status == TaskStatus.DONE)
+            return;
 
         if (dependencies.isEmpty() || areDependenciesCompleted()) {
             status = TaskStatus.TO_DO;
@@ -182,10 +232,12 @@ public class Task implements Comparable<Task> {
     }
 
     private boolean dependsOn(Task target) {
-        if (dependencies.contains(target)) return true;
+        if (dependencies.contains(target))
+            return true;
 
         for (Task dependency : dependencies) {
-            if (dependency.dependsOn(target)) return true;
+            if (dependency.dependsOn(target))
+                return true;
         }
         return false;
     }
@@ -214,16 +266,14 @@ public class Task implements Comparable<Task> {
 
         if (!hasPermission) {
             throw new InsufficientPermissionsException(
-                    "User does not have permission to perform this action"
-            );
+                    "User does not have permission to perform this action");
         }
 
         if (actor instanceof Engineer && !permissionType.equals("canAssignTask")) {
             Engineer engineer = (Engineer) actor;
             if (assignedEngineer != null && !assignedEngineer.getId().equals(engineer.getId())) {
                 throw new InsufficientPermissionsException(
-                        "Engineer can only modify tasks assigned to them"
-                );
+                        "Engineer can only modify tasks assigned to them");
             }
         }
     }
