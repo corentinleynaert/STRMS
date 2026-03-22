@@ -15,9 +15,7 @@ public class ReportGenerator implements Reportable {
         StringBuilder report = new StringBuilder();
         report.append("===== TASK REPORT =====\n\n");
 
-        List<Task> allTasks = taskManager.getReadyTasks();
-        allTasks.addAll(taskManager.getInProgressTasks());
-        allTasks.addAll(taskManager.getBlockedTasks());
+        List<Task> allTasks = taskManager.getAllTasks();
 
         report.append("Total Tasks: ").append(allTasks.size()).append("\n\n");
 
@@ -68,9 +66,7 @@ public class ReportGenerator implements Reportable {
         StringBuilder report = new StringBuilder();
         report.append("===== OVERDUE TASKS REPORT =====\n\n");
 
-        List<Task> allTasks = taskManager.getReadyTasks();
-        allTasks.addAll(taskManager.getInProgressTasks());
-        allTasks.addAll(taskManager.getBlockedTasks());
+        List<Task> allTasks = taskManager.getAllTasks();
 
         LocalDateTime now = LocalDateTime.now();
 
@@ -103,9 +99,7 @@ public class ReportGenerator implements Reportable {
         StringBuilder report = new StringBuilder();
         report.append("===== TASKS BY PRIORITY =====\n\n");
 
-        List<Task> allTasks = taskManager.getReadyTasks();
-        allTasks.addAll(taskManager.getInProgressTasks());
-        allTasks.addAll(taskManager.getBlockedTasks());
+        List<Task> allTasks = taskManager.getAllTasks();
 
         Map<PriorityLevel, List<Task>> tasksByPriority = allTasks.stream()
                 .collect(Collectors.groupingBy(Task::getPriority));
@@ -128,11 +122,10 @@ public class ReportGenerator implements Reportable {
         StringBuilder report = new StringBuilder();
         report.append("===== TASKS BY STATUS =====\n\n");
 
-        Map<TaskStatus, List<Task>> tasksByStatus = Map.of(
-                TaskStatus.TO_DO, taskManager.getReadyTasks(),
-                TaskStatus.IN_PROGRESS, taskManager.getInProgressTasks(),
-                TaskStatus.BLOCKED, taskManager.getBlockedTasks(),
-                TaskStatus.DONE, List.of());
+        List<Task> allTasks = taskManager.getAllTasks();
+
+        Map<TaskStatus, List<Task>> tasksByStatus = allTasks.stream()
+                .collect(Collectors.groupingBy(Task::getStatus));
 
         for (TaskStatus status : TaskStatus.values()) {
             List<Task> tasksForStatus = tasksByStatus.getOrDefault(status, List.of());
@@ -163,9 +156,7 @@ public class ReportGenerator implements Reportable {
         StringBuilder report = new StringBuilder();
         report.append("===== COMPREHENSIVE REPORT =====\n\n");
 
-        List<Task> allTasks = taskManager.getReadyTasks();
-        allTasks.addAll(taskManager.getInProgressTasks());
-        allTasks.addAll(taskManager.getBlockedTasks());
+        List<Task> allTasks = taskManager.getAllTasks();
 
         List<User> allUsers = userRepository.getAllUsers();
 
@@ -179,6 +170,7 @@ public class ReportGenerator implements Reportable {
         report.append("- TO_DO: ").append(taskManager.getReadyTasks().size()).append("\n");
         report.append("- IN_PROGRESS: ").append(taskManager.getInProgressTasks().size()).append("\n");
         report.append("- BLOCKED: ").append(taskManager.getBlockedTasks().size()).append("\n");
+        report.append("- DONE: ").append(allTasks.stream().filter(t -> t.getStatus() == TaskStatus.DONE).count()).append("\n");
 
         LocalDateTime now = LocalDateTime.now();
         long overdueCount = allTasks.stream()

@@ -33,7 +33,7 @@ public class AdminRole implements UserRole {
 
     @Override
     public boolean canChangeTaskStatus() {
-        return true;
+        return false;
     }
 
     @Override

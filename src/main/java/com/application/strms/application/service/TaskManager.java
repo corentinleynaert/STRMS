@@ -3,7 +3,9 @@ package com.application.strms.application.service;
 import com.application.strms.application.result.CreateTaskResult;
 import com.application.strms.application.result.DeleteTaskResult;
 import com.application.strms.application.result.UpdateTaskResult;
+import com.application.strms.domain.exception.DependencyNotCompletedException;
 import com.application.strms.domain.exception.InsufficientPermissionsException;
+import com.application.strms.domain.exception.InvalidRoleException;
 import com.application.strms.domain.exception.TaskNotFoundException;
 import com.application.strms.domain.model.Engineer;
 import com.application.strms.domain.model.PriorityLevel;
@@ -55,6 +57,11 @@ public class TaskManager {
         }
 
         try {
+            if (!currentUser.getRole().canCreateTask()) {
+                throw new InvalidRoleException(
+                        "User role does not have permission to create tasks");
+            }
+
             Task task = new Task(title, description, priority, category, deadline);
             taskRepository.save(task);
             allTasks.put(task.getUlid(), task);
@@ -71,6 +78,15 @@ public class TaskManager {
         try {
             if (taskId == null) {
                 return DeleteTaskResult.failure("Task ID cannot be null");
+            }
+
+            if (currentUser == null) {
+                return DeleteTaskResult.failure("Current user cannot be null");
+            }
+
+            if (!currentUser.getRole().canDeleteTask()) {
+                throw new InvalidRoleException(
+                        "User role does not have permission to delete tasks");
             }
 
             Task task = findTaskOrThrow(taskId);
@@ -174,6 +190,7 @@ public class TaskManager {
             task.assignEngineer(engineer, currentUser);
             addHistoryEntry(task, "Task assigned", "assignedEngineer", oldEngineerValue, newEngineerValue, currentUser);
             taskRepository.update(task);
+            updateCollections(task);
             if (engineer != null) {
                 notificationManager.notifyAssignment(task, engineer);
             }
@@ -188,8 +205,13 @@ public class TaskManager {
     public UpdateTaskResult unassignTask(Ulid taskId, User currentUser) throws IOException {
         try {
             Task task = findTaskOrThrow(taskId);
+            Engineer oldEngineer = task.getAssignedEngineer();
+            String oldEngineerValue = oldEngineer != null ? oldEngineer.getName() : "null";
+            
             task.unassignEngineer(currentUser);
+            addHistoryEntry(task, "Task unassigned", "assignedEngineer", oldEngineerValue, "null", currentUser);
             taskRepository.update(task);
+            updateCollections(task);
             return UpdateTaskResult.success();
         } catch (IOException e) {
             throw e;
@@ -220,6 +242,7 @@ public class TaskManager {
             Task task = findTaskOrThrow(taskId);
             Task dependency = findTaskOrThrow(dependencyId);
             task.removeDependency(dependency, currentUser);
+            addHistoryEntry(task, "Dependency removed", "dependencies", dependency.getTitle(), "none", currentUser);
             taskRepository.update(task);
             updateCollections(task);
             return UpdateTaskResult.success();
@@ -235,7 +258,16 @@ public class TaskManager {
             Task task = findTaskOrThrow(taskId);
             TaskStatus oldStatus = task.getStatus();
 
-            task.updateStatus(newStatus, currentUser);
+            try {
+                task.updateStatus(newStatus, currentUser);
+            } catch (DependencyNotCompletedException e) {
+                addHistoryEntry(task, 
+                        "Attempt to start task rejected: dependencies not completed", 
+                        "status", oldStatus.toString(), newStatus.toString(), currentUser);
+                taskRepository.update(task);
+                throw e;
+            }
+
             addHistoryEntry(task, "Status changed", "status", oldStatus.toString(), newStatus.toString(), currentUser);
             taskRepository.update(task);
             updateCollections(task);
@@ -320,12 +352,25 @@ public class TaskManager {
             case BLOCKED:
                 blockedTaskIds.add(taskId);
                 break;
-            case DONE:
-                readyTasks.offer(task);
-                break;
             case TO_DO:
+                // Only add TO_DO tasks with all dependencies completed to readyTasks
+                if (task.getDependencies().isEmpty() || areAllDependenciesCompleted(task)) {
+                    readyTasks.offer(task);
+                }
+                break;
+            case DONE:
+                // DONE tasks should not be in any collection
                 break;
         }
+    }
+
+    private boolean areAllDependenciesCompleted(Task task) {
+        for (Task dependency : task.getDependencies()) {
+            if (dependency.getStatus() != TaskStatus.DONE) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void loadTasks() {
