@@ -170,6 +170,10 @@ public class Task implements Comparable<Task> {
         }
     }
 
+    public void assignEngineerUnchecked(Engineer engineer) {
+        this.assignedEngineer = engineer;
+    }
+
     public void removeDependency(Task dependency, User actor) {
         validatePermission(actor, "canUpdateTask");
         if (dependency == null)
@@ -211,7 +215,7 @@ public class Task implements Comparable<Task> {
         history.add(entry);
     }
 
-    private void refreshStatusFromDependencies() {
+    public void refreshStatusFromDependencies() {
         if (status == TaskStatus.DONE)
             return;
 

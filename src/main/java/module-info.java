@@ -1,6 +1,6 @@
 module com.application.strms {
     requires java.desktop;
-    requires javafx.controls;
+    requires transitive javafx.controls;
     requires jbcrypt;
     requires de.huxhorn.sulky.ulid;
 
@@ -24,6 +24,7 @@ module com.application.strms {
     exports com.application.strms.presentation.controller.pages;
     exports com.application.strms.presentation.loader;
     exports com.application.strms.presentation.navigation;
+    exports com.application.strms.presentation.service;
 
     opens com.application.strms.app to javafx.fxml;
     opens com.application.strms.application to javafx.fxml;

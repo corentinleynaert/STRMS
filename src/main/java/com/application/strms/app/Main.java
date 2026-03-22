@@ -29,7 +29,7 @@ public class Main extends Application {
         try {
             FileHandler fileHandler = new FileHandler();
             UserRepository userRepository = new FileUserRepository(fileHandler);
-            TaskRepository taskRepository = new FileTaskRepository(fileHandler);
+            TaskRepository taskRepository = new FileTaskRepository(fileHandler, userRepository);
             PasswordHasher passwordHasher = new BCryptPasswordHasher();
             AuthService authService = new AuthService(userRepository, passwordHasher);
             TaskManager taskManager = new TaskManager(taskRepository);

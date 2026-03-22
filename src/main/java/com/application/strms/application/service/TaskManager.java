@@ -73,6 +73,7 @@ public class TaskManager {
                 if (otherTask.getDependencies().contains(task)) {
                     try {
                         otherTask.removeDependency(task, currentUser);
+                        updateCollections(otherTask);
                     } catch (InsufficientPermissionsException e) {
                     }
                 }

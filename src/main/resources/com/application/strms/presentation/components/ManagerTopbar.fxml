@@ -19,6 +19,9 @@
             <Button text="Dashboard"
                     onAction="#goToHome"
                     styleClass="topbar-nav-button"/>
+            <Button text="Tasks"
+                    onAction="#goToTasks"
+                    styleClass="topbar-nav-button"/>
         </HBox>
     </left>
 

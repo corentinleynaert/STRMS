@@ -3,12 +3,15 @@ package com.application.strms.infrastructure.repository;
 import com.application.strms.domain.exception.DuplicateTaskException;
 import com.application.strms.domain.exception.FilePersistenceException;
 import com.application.strms.domain.exception.TaskNotFoundException;
+import com.application.strms.domain.model.Engineer;
 import com.application.strms.domain.model.PriorityLevel;
 import com.application.strms.domain.model.Task;
 import com.application.strms.domain.model.TaskCategory;
 import com.application.strms.domain.model.TaskStatus;
 import com.application.strms.domain.model.Ulid;
+import com.application.strms.domain.model.User;
 import com.application.strms.domain.repository.TaskRepository;
+import com.application.strms.domain.repository.UserRepository;
 import com.application.strms.infrastructure.persistence.FileHandler;
 
 import java.io.IOException;
@@ -25,10 +28,13 @@ public class FileTaskRepository implements TaskRepository {
 
     private final Map<Ulid, Task> tasks = new HashMap<>();
     private final FileHandler fileHandler;
+    private final UserRepository userRepository;
     private final Map<Ulid, List<Ulid>> dependencyMap = new HashMap<>();
+    private final Map<Ulid, Ulid> assignedEngineerMap = new HashMap<>();
 
-    public FileTaskRepository(FileHandler fileHandler) throws IOException {
+    public FileTaskRepository(FileHandler fileHandler, UserRepository userRepository) throws IOException {
         this.fileHandler = fileHandler;
+        this.userRepository = userRepository;
 
         try {
             List<Task> loadedTasks = fileHandler.load(TASKS_FILE, this::mapLineToTask);
@@ -38,6 +44,7 @@ public class FileTaskRepository implements TaskRepository {
             }
 
             reconstituteDependencies();
+            restoreAssignedEngineers();
         } catch (IOException e) {
             throw new FilePersistenceException("Failed to initialize task repository from file", e);
         }
@@ -142,6 +149,11 @@ public class FileTaskRepository implements TaskRepository {
             LocalDateTime deadline = deadlineStr.equals("null") ? null
                     : LocalDateTime.parse(deadlineStr, DATE_FORMATTER);
 
+            String engineerIdStr = parts[6];
+            if (!engineerIdStr.equals("null")) {
+                assignedEngineerMap.put(ulid, Ulid.fromString(engineerIdStr));
+            }
+
             TaskStatus status = TaskStatus.valueOf(parts[7]);
 
             String dependenciesStr = parts[8];
@@ -171,6 +183,26 @@ public class FileTaskRepository implements TaskRepository {
                     if (dep != null) {
                         task.addDependencyUnchecked(dep);
                     }
+                }
+                task.refreshStatusFromDependencies();
+            }
+        }
+    }
+
+    private void restoreAssignedEngineers() {
+        for (Map.Entry<Ulid, Ulid> entry : assignedEngineerMap.entrySet()) {
+            Task task = tasks.get(entry.getKey());
+            if (task != null) {
+                try {
+                    List<User> users = userRepository.getAllUsers();
+                    for (User user : users) {
+                        if (user instanceof Engineer engineer && engineer.getId().equals(entry.getValue())) {
+                            task.assignEngineerUnchecked(engineer);
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    System.err.println("Failed to restore assigned engineer for task: " + entry.getKey());
                 }
             }
         }

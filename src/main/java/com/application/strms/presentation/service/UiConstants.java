@@ -12,6 +12,9 @@ public final class UiConstants {
         public static final String ADD_USER = "AddUser";
         public static final String UPDATE_USER = "UpdateUser";
         public static final String USERS = "Users";
+        public static final String TASKS = "Tasks";
+        public static final String ADD_TASK = "AddTask";
+        public static final String UPDATE_TASK = "UpdateTask";
 
         private Pages() {
             throw new AssertionError("Utility class");
@@ -34,6 +37,12 @@ public final class UiConstants {
         public static final String USER_UPDATED = "User updated successfully!";
         public static final String ERROR_ACCESSING_DATA = "Error accessing user data: ";
         public static final String NO_USER_SELECTED = "No user selected for update";
+        public static final String TASK_CREATED = "Task created successfully!";
+        public static final String TASK_UPDATED = "Task updated successfully!";
+        public static final String TASK_DEPENDENCY_ADDED = "Dependency added successfully!";
+        public static final String TASK_DEPENDENCY_REMOVED = "Dependency removed successfully!";
+        public static final String ERROR_ACCESSING_TASK_DATA = "Error accessing task data: ";
+        public static final String NO_TASK_SELECTED = "No task selected for update";
 
         private Messages() {
             throw new AssertionError("Utility class");

@@ -179,6 +179,31 @@
     -fx-background-color: #252525;
 }
 
+.popup-button {
+    -fx-background-color: #2a2a2a;
+    -fx-text-fill: #ababab;
+    -fx-border-color: #3d3d3d;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-border-width: 1;
+    -fx-font-weight: 400;
+    -fx-font-size: 12px;
+    -fx-padding: 8 12;
+    -fx-cursor: hand;
+    -fx-font-family: "-apple-system", "Segoe UI", "Helvetica Neue", "Arial", sans-serif;
+}
+
+.popup-button:hover {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #5a5a5a;
+    -fx-text-fill: #ffffff;
+}
+
+.popup-button:pressed {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: #10a37f;
+}
+
 .delete-button {
     -fx-background-color: #dc2626;
     -fx-text-fill: #ffffff;
