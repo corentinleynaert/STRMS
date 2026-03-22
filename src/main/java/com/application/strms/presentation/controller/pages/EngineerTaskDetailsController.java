@@ -142,7 +142,14 @@ public class EngineerTaskDetailsController extends BaseController {
                     String userName = entry.getPerformedBy() != null ? entry.getPerformedBy().getName() : "Unknown";
                     String timestamp = entry.getTimestamp() != null ? entry.getTimestamp().format(DATE_FORMATTER)
                             : "No timestamp";
-                    setText(String.format("[%s] %s - %s", timestamp, entry.getAction(), userName));
+
+                    String details = "";
+                    if (entry.getFieldChanged() != null && entry.getOldValue() != null && entry.getNewValue() != null) {
+                        details = String.format(" [%s: %s → %s]", entry.getFieldChanged(), entry.getOldValue(),
+                                entry.getNewValue());
+                    }
+
+                    setText(String.format("[%s] %s%s - %s", timestamp, entry.getAction(), details, userName));
                 }
             }
         });

@@ -271,7 +271,18 @@ public class FileTaskRepository implements TaskRepository {
             String userName = entry.getPerformedBy().getName().replace("|||", "___").replace("$", "_DOLLAR_");
             String userRole = entry.getPerformedBy().getRole().getIdentifier();
 
-            String entryStr = String.format("%s|||%s|||%s|||%s|||%s", timestamp, action, userId, userName, userRole);
+            String fieldChanged = entry.getFieldChanged() != null
+                    ? entry.getFieldChanged().replace("|||", "___").replace("$", "_DOLLAR_")
+                    : "null";
+            String oldValue = entry.getOldValue() != null
+                    ? entry.getOldValue().replace("|||", "___").replace("$", "_DOLLAR_")
+                    : "null";
+            String newValue = entry.getNewValue() != null
+                    ? entry.getNewValue().replace("|||", "___").replace("$", "_DOLLAR_")
+                    : "null";
+
+            String entryStr = String.format("%s|||%s|||%s|||%s|||%s|||%s|||%s|||%s", timestamp, action, userId,
+                    userName, userRole, fieldChanged, oldValue, newValue);
             parts.add(entryStr);
         }
         return String.join("$", parts);
@@ -297,10 +308,24 @@ public class FileTaskRepository implements TaskRepository {
                     String userRole = fields[4];
 
                     LocalDateTime dateTime = LocalDateTime.parse(timestamp, DATE_FORMATTER);
-
                     User performedBy = createUserFromData(userId, userName, userRole);
 
-                    TaskHistoryEntry historyEntry = new TaskHistoryEntry(action, performedBy, dateTime);
+                    TaskHistoryEntry historyEntry;
+
+                    if (fields.length >= 8) {
+                        String fieldChanged = fields[5].equals("null") ? null
+                                : fields[5].replace("_DOLLAR_", "$").replace("___", "|||");
+                        String oldValue = fields[6].equals("null") ? null
+                                : fields[6].replace("_DOLLAR_", "$").replace("___", "|||");
+                        String newValue = fields[7].equals("null") ? null
+                                : fields[7].replace("_DOLLAR_", "$").replace("___", "|||");
+
+                        historyEntry = new TaskHistoryEntry(action, performedBy, dateTime, fieldChanged, oldValue,
+                                newValue);
+                    } else {
+                        historyEntry = new TaskHistoryEntry(action, performedBy, dateTime);
+                    }
+
                     task.addHistoryEntry(historyEntry);
                 } catch (Exception e) {
                     throw new FilePersistenceException("Failed to load task history", e);

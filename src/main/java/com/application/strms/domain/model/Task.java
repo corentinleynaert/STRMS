@@ -1,6 +1,9 @@
 package com.application.strms.domain.model;
 
+import com.application.strms.domain.exception.CircularDependencyException;
+import com.application.strms.domain.exception.DependencyNotCompletedException;
 import com.application.strms.domain.exception.InsufficientPermissionsException;
+import com.application.strms.domain.exception.InvalidTaskStateException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -158,7 +161,7 @@ public class Task implements Comparable<Task> {
         if (dependencies.contains(dependency))
             throw new IllegalArgumentException("Dependency already exists");
         if (dependency.dependsOn(this))
-            throw new IllegalArgumentException("Circular dependency detected");
+            throw new CircularDependencyException("Circular dependency detected");
 
         dependencies.add(dependency);
         refreshStatusFromDependencies();
@@ -191,11 +194,11 @@ public class Task implements Comparable<Task> {
             throw new IllegalArgumentException("Status cannot be null");
 
         if (status == TaskStatus.DONE && newStatus != TaskStatus.DONE) {
-            throw new IllegalArgumentException("Cannot revert a completed task");
+            throw new InvalidTaskStateException("Cannot revert a completed task from DONE to another state");
         }
 
         if (newStatus == TaskStatus.IN_PROGRESS && !areDependenciesCompleted()) {
-            throw new IllegalArgumentException("Dependencies not completed");
+            throw new DependencyNotCompletedException("Cannot transition to IN_PROGRESS: dependencies not completed");
         }
 
         this.status = newStatus;
@@ -253,28 +256,19 @@ public class Task implements Comparable<Task> {
 
         UserRole role = actor.getRole();
 
-        boolean hasPermission = false;
-        switch (permissionType) {
-            case "canUpdateTask":
-                hasPermission = role.canUpdateTask();
-                break;
-            case "canChangeTaskStatus":
-                hasPermission = role.canChangeTaskStatus();
-                break;
-            case "canAssignTask":
-                hasPermission = role.canAssignTask();
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown permission type: " + permissionType);
-        }
+        boolean hasPermission = switch (permissionType) {
+            case "canUpdateTask" -> role.canUpdateTask();
+            case "canChangeTaskStatus" -> role.canChangeTaskStatus();
+            case "canAssignTask" -> role.canAssignTask();
+            default -> throw new IllegalArgumentException("Unknown permission type: " + permissionType);
+        };
 
         if (!hasPermission) {
             throw new InsufficientPermissionsException(
                     "User does not have permission to perform this action");
         }
 
-        if (actor instanceof Engineer && !permissionType.equals("canAssignTask")) {
-            Engineer engineer = (Engineer) actor;
+        if (actor instanceof Engineer engineer && !permissionType.equals("canAssignTask")) {
             if (assignedEngineer != null && !assignedEngineer.getId().equals(engineer.getId())) {
                 throw new InsufficientPermissionsException(
                         "Engineer can only modify tasks assigned to them");

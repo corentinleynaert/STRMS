@@ -112,25 +112,38 @@ public class TaskManager {
 
             boolean needsCollectionUpdate = false;
 
-            if (title != null && !title.isBlank()) {
+            if (title != null && !title.isBlank() && !task.getTitle().equals(title)) {
+                String oldTitle = task.getTitle();
                 task.updateTitle(title, currentUser);
+                addHistoryEntry(task, "Title changed", "title", oldTitle, title, currentUser);
             }
 
-            if (description != null) {
+            if (description != null && !task.getDescription().equals(description)) {
+                String oldDescription = task.getDescription();
                 task.updateDescription(description, currentUser);
+                addHistoryEntry(task, "Description changed", "description", oldDescription, description, currentUser);
             }
 
-            if (priority != null) {
+            if (priority != null && !task.getPriority().equals(priority)) {
+                String oldPriority = task.getPriority().toString();
+                String newPriority = priority.toString();
                 task.changePriority(priority, currentUser);
+                addHistoryEntry(task, "Priority changed", "priority", oldPriority, newPriority, currentUser);
                 needsCollectionUpdate = true;
             }
 
-            if (category != null) {
+            if (category != null && !task.getCategory().equals(category)) {
+                String oldCategory = task.getCategory().toString();
+                String newCategory = category.toString();
                 task.updateCategory(category, currentUser);
+                addHistoryEntry(task, "Category changed", "category", oldCategory, newCategory, currentUser);
             }
 
-            if (deadline != null) {
+            if (deadline != null && !deadlinesEqual(task.getDeadline(), deadline)) {
+                String oldDeadline = task.getDeadline() != null ? task.getDeadline().toString() : "null";
+                String newDeadline = deadline.toString();
                 task.updateDeadline(deadline, currentUser);
+                addHistoryEntry(task, "Deadline changed", "deadline", oldDeadline, newDeadline, currentUser);
             }
 
             taskRepository.update(task);
@@ -148,7 +161,12 @@ public class TaskManager {
     public UpdateTaskResult assignTask(Ulid taskId, Engineer engineer, User currentUser) throws IOException {
         try {
             Task task = findTaskOrThrow(taskId);
+            Engineer oldEngineer = task.getAssignedEngineer();
+            String oldEngineerValue = oldEngineer != null ? oldEngineer.getName() : "null";
+            String newEngineerValue = engineer != null ? engineer.getName() : "null";
+
             task.assignEngineer(engineer, currentUser);
+            addHistoryEntry(task, "Task assigned", "assignedEngineer", oldEngineerValue, newEngineerValue, currentUser);
             taskRepository.update(task);
             return UpdateTaskResult.success();
         } catch (IOException e) {
@@ -175,7 +193,9 @@ public class TaskManager {
         try {
             Task task = findTaskOrThrow(taskId);
             Task dependency = findTaskOrThrow(dependencyId);
+
             task.addDependency(dependency, currentUser);
+            addHistoryEntry(task, "Dependency added", "dependencies", "none", dependency.getTitle(), currentUser);
             taskRepository.update(task);
             updateCollections(task);
             return UpdateTaskResult.success();
@@ -204,7 +224,10 @@ public class TaskManager {
     public UpdateTaskResult changeTaskStatus(Ulid taskId, TaskStatus newStatus, User currentUser) throws IOException {
         try {
             Task task = findTaskOrThrow(taskId);
+            TaskStatus oldStatus = task.getStatus();
+
             task.updateStatus(newStatus, currentUser);
+            addHistoryEntry(task, "Status changed", "status", oldStatus.toString(), newStatus.toString(), currentUser);
             taskRepository.update(task);
             updateCollections(task);
             return UpdateTaskResult.success();
@@ -218,7 +241,11 @@ public class TaskManager {
     public UpdateTaskResult markTaskAsDone(Ulid taskId, User currentUser) throws IOException {
         try {
             Task task = findTaskOrThrow(taskId);
+            TaskStatus oldStatus = task.getStatus();
+
             task.markAsDone(currentUser);
+            addHistoryEntry(task, "Task completed", "status", oldStatus.toString(), TaskStatus.DONE.toString(),
+                    currentUser);
             taskRepository.update(task);
             updateCollections(task);
             return UpdateTaskResult.success();
@@ -250,6 +277,21 @@ public class TaskManager {
         }
 
         return task;
+    }
+
+    private void addHistoryEntry(Task task, String action, String fieldChanged, String oldValue, String newValue,
+            User performedBy) {
+        TaskHistoryEntry entry = new TaskHistoryEntry(action, performedBy, LocalDateTime.now(), fieldChanged, oldValue,
+                newValue);
+        task.addHistoryEntry(entry);
+    }
+
+    private boolean deadlinesEqual(LocalDateTime d1, LocalDateTime d2) {
+        if (d1 == null && d2 == null)
+            return true;
+        if (d1 == null || d2 == null)
+            return false;
+        return d1.equals(d2);
     }
 
     private void updateCollections(Task task) {
