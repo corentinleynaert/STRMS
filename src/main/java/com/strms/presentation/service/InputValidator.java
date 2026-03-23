@@ -5,11 +5,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextInputControl;
 
 public final class InputValidator {
-
-    private InputValidator() {
-        throw new AssertionError("Utility class");
-    }
-
     public static void enableDisableButtonOnValidation(
             Button button,
             TextInputControl... textFields) {
