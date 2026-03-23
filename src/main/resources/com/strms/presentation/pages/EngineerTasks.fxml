@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.strms.presentation.controller.pages.EngineerTasksController"
+            styleClass="page-root">
+
+    <top>
+        <VBox spacing="24" styleClass="users-header">
+            <padding>
+                <Insets top="40" left="48" right="48" bottom="24"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="24">
+                <VBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="My Tasks" styleClass="page-title"/>
+                    <Label text="View and manage your assigned tasks" styleClass="page-subtitle"/>
+                </VBox>
+            </HBox>
+
+            <Label fx:id="emptyStateLabel"
+                   text="No tasks assigned to you"
+                   styleClass="page-subtitle"
+                   alignment="CENTER"
+                   managed="false"
+                   visible="false"/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox styleClass="users-container" VBox.vgrow="ALWAYS" maxWidth="Infinity">
+            <padding>
+                <Insets left="48" right="48" bottom="32"/>
+            </padding>
+
+            <TableView fx:id="tasksTable"
+                       styleClass="users-table"
+                       VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn text="Title" prefWidth="150" sortable="false">
+                        <cellValueFactory>
+                            <javafx.scene.control.cell.PropertyValueFactory property="title"/>
+                        </cellValueFactory>
+                    </TableColumn>
+
+                    <TableColumn text="Status" prefWidth="100" sortable="false">
+                        <cellValueFactory>
+                            <javafx.scene.control.cell.PropertyValueFactory property="status"/>
+                        </cellValueFactory>
+                    </TableColumn>
+
+                    <TableColumn text="Priority" prefWidth="90" sortable="false">
+                        <cellValueFactory>
+                            <javafx.scene.control.cell.PropertyValueFactory property="priority"/>
+                        </cellValueFactory>
+                    </TableColumn>
+
+                    <TableColumn text="Category" prefWidth="100" sortable="false">
+                        <cellValueFactory>
+                            <javafx.scene.control.cell.PropertyValueFactory property="category"/>
+                        </cellValueFactory>
+                    </TableColumn>
+
+                    <TableColumn text="Deadline" prefWidth="150" sortable="false">
+                        <cellValueFactory>
+                            <javafx.scene.control.cell.PropertyValueFactory property="deadline"/>
+                        </cellValueFactory>
+                    </TableColumn>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="16" styleClass="page-footer">
+            <padding>
+                <Insets left="48" right="48" top="16" bottom="16"/>
+            </padding>
+        </HBox>
+    </bottom>
+</BorderPane>
