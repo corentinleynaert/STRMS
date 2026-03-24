@@ -11,6 +11,7 @@ public class TaskDisplay {
     private final StringProperty status;
     private final StringProperty category;
     private final StringProperty deadline;
+    private final StringProperty assignedEngineer;
 
     public TaskDisplay(Task task) {
         this.task = task;
@@ -20,6 +21,8 @@ public class TaskDisplay {
         this.category = new SimpleStringProperty(task.getCategory().name());
         this.deadline = new SimpleStringProperty(
                 task.getDeadline() != null ? task.getDeadline().toString() : "No deadline");
+        this.assignedEngineer = new SimpleStringProperty(
+                task.getAssignedEngineer() != null ? task.getAssignedEngineer().getName() : "Unassigned");
     }
 
     public Task getTask() {
@@ -44,5 +47,9 @@ public class TaskDisplay {
 
     public String getDeadline() {
         return deadline.get();
+    }
+
+    public String getAssignedEngineer() {
+        return assignedEngineer.get();
     }
 }

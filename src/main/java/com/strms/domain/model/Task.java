@@ -219,7 +219,7 @@ public class Task implements Comparable<Task> {
     }
 
     public void refreshStatusFromDependencies() {
-        if (status == TaskStatus.DONE)
+        if (status == TaskStatus.DONE || status == TaskStatus.IN_PROGRESS)
             return;
 
         if (dependencies.isEmpty() || areDependenciesCompleted()) {
