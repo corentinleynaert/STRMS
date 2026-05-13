@@ -1,0 +1,933 @@
+@startuml STRMS_Complete_UML
+
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+package "com.strms.app" {
+    class Main {
+        + {static} void main(String[] args)
+        + void start(Stage stage) throws Exception
+    }
+}
+
+package "com.strms.application" {
+    class ApplicationContext {
+        - AuthService authService
+        - SessionManager sessionManager
+        - UserRepository userRepository
+        - TaskManager taskManager
+        - Dashboard dashboard
+        - ReportGenerator reportGenerator
+        + ApplicationContext(AuthService, SessionManager, UserRepository, TaskManager)
+        + AuthService getAuthService()
+        + SessionManager getSessionManager()
+        + UserRepository getApplicationUserRepository()
+        + TaskManager getTaskManager()
+        + Dashboard getDashboard()
+        + ReportGenerator getReportGenerator()
+    }
+}
+
+package "com.strms.application.result" {
+    class AddUserResult {
+        - boolean success
+        - String error
+        - AddUserResult(boolean, String)
+        + {static} AddUserResult success()
+        + {static} AddUserResult failure(String)
+        + boolean isSuccess()
+        + String toString()
+    }
+
+    class CreateTaskResult {
+        - boolean success
+        - String message
+        - Task task
+        - CreateTaskResult(boolean, String, Task)
+        + {static} CreateTaskResult success(Task)
+        + {static} CreateTaskResult failure(String)
+        + boolean isSuccess()
+        + String getMessage()
+        + Task getTask()
+    }
+
+    class DeleteTaskResult {
+        - boolean success
+        - String message
+        - DeleteTaskResult(boolean, String)
+        + {static} DeleteTaskResult success()
+        + {static} DeleteTaskResult failure(String)
+        + boolean isSuccess()
+        + String getMessage()
+    }
+
+    class DeleteUserResult {
+        - boolean success
+        - String error
+        - DeleteUserResult(boolean, String)
+        + {static} DeleteUserResult success()
+        + {static} DeleteUserResult failure(String)
+        + boolean isSuccess()
+        + String getError()
+    }
+
+    class LoginResult {
+        - boolean success
+        - String error
+        - User user
+        - LoginResult(boolean, String, User)
+        + {static} LoginResult success(User)
+        + {static} LoginResult failure(String)
+        + boolean isSuccess()
+        + String toString()
+        + User user()
+    }
+
+    class UpdateTaskResult {
+        - boolean success
+        - String message
+        - UpdateTaskResult(boolean, String)
+        + {static} UpdateTaskResult success()
+        + {static} UpdateTaskResult failure(String)
+        + boolean isSuccess()
+        + String getMessage()
+    }
+
+    class UpdateUserResult {
+        - boolean success
+        - String error
+        - User user
+        - UpdateUserResult(boolean, String, User)
+        + {static} UpdateUserResult success(User)
+        + {static} UpdateUserResult failure(String)
+        + boolean isSuccess()
+        + String getError()
+        + User getUser()
+        + String toString()
+    }
+}
+
+package "com.strms.application.service" {
+    interface NotificationService {
+        + void notify(Task, String)
+        + void notifyAssignment(Task, Engineer)
+        + void notifyStatusChange(Task, TaskStatus)
+        + void notifyDeadline(Task)
+    }
+
+    class AuthService {
+        - UserRepository userRepository
+        - PasswordHasher passwordHasher
+        + AuthService(UserRepository, PasswordHasher)
+        + LoginResult login(String, String) throws IOException
+        + AddUserResult addUser(User, String, String, String, String) throws IOException
+        + UpdateUserResult editUser(User, Ulid, String, String, String, String) throws IOException
+        + DeleteUserResult deleteUser(User, Ulid) throws IOException
+        - void validateManageUsersPermission(User)
+        - User createUserByRole(String, Email, String)
+        - User createUserByRole(Ulid, String, Email, String)
+        - User instantiateUserByRole(Ulid, String, Email, UserRole)
+    }
+
+    class Dashboard {
+        - TaskManager taskManager
+        - UserRepository userRepository
+        + Dashboard(TaskManager, UserRepository)
+        + int getTotalTasks()
+        + int getTodoTasks()
+        + int getInProgressTasks()
+        + int getBlockedTasks()
+        + int getDoneTasks()
+        + int getTotalUsers()
+        + int getEngineersCount()
+        + int getOverdueTasks()
+    }
+
+    class ReportGenerator {
+        + String generateTaskReport(TaskManager)
+        + String generateUserReport(UserRepository)
+        + String generateOverdueTasksReport(TaskManager)
+        + String generateTasksByPriorityReport(TaskManager)
+        + String generateTasksByStatusReport(TaskManager)
+        + String generateComprehensiveReport(TaskManager, UserRepository)
+    }
+
+    class TaskManager {
+        - TaskRepository taskRepository
+        - NotificationService notificationService
+        - Map allTasks
+        - Set inProgressTaskIds
+        - Set blockedTaskIds
+        - PriorityQueue readyTasks
+        + TaskManager(TaskRepository, NotificationService) throws IOException
+        + CreateTaskResult createTask(String, String, PriorityLevel, TaskCategory, LocalDateTime, User) throws IOException
+        + DeleteTaskResult deleteTask(Ulid, User) throws IOException
+        + Task findTaskById(Ulid)
+        + List<Task> getAllTasks()
+        + UpdateTaskResult updateTask(Ulid, String, String, PriorityLevel, TaskCategory, LocalDateTime, User) throws IOException
+        + UpdateTaskResult assignTask(Ulid, Engineer, User) throws IOException
+        + UpdateTaskResult unassignTask(Ulid, User) throws IOException
+        + UpdateTaskResult addDependency(Ulid, Ulid, User) throws IOException
+        + UpdateTaskResult removeDependency(Ulid, Ulid, User) throws IOException
+        + UpdateTaskResult changeTaskStatus(Ulid, TaskStatus, User) throws IOException
+        + UpdateTaskResult markTaskAsDone(Ulid, User) throws IOException
+        + UpdateTaskResult addTaskHistoryEntry(Ulid, TaskHistoryEntry) throws IOException
+        + List<Task> getReadyTasks()
+        + List<Task> getInProgressTasks()
+        + List<Task> getBlockedTasks()
+        + void refreshAllTaskStates()
+        - Task findTaskOrThrow(Ulid)
+        - void addHistoryEntry(Task, String, String, String, String, User)
+        - boolean deadlinesEqual(LocalDateTime, LocalDateTime)
+        - void updateCollections(Task)
+        - boolean areAllDependenciesCompleted(Task)
+        - void loadTasks()
+    }
+}
+
+package "com.strms.application.session" {
+    class SessionManager {
+        - User currentUser
+        + void login(User)
+        + void logout()
+        + User getCurrentUser()
+        + boolean isAuthenticated()
+    }
+}
+
+package "com.strms.domain.exception" {
+    class CircularDependencyException {
+        + CircularDependencyException(String)
+    }
+
+    class DependencyNotCompletedException {
+        + DependencyNotCompletedException(String)
+    }
+
+    class DuplicateEmailException {
+        + DuplicateEmailException(String)
+    }
+
+    class DuplicateTaskException {
+        + DuplicateTaskException(String)
+    }
+
+    class FilePersistenceException {
+        + FilePersistenceException(String, Throwable)
+    }
+
+    class InsufficientPermissionsException {
+        + InsufficientPermissionsException(String)
+    }
+
+    class InvalidRoleException {
+        + InvalidRoleException(String)
+    }
+
+    class InvalidTaskStateException {
+        + InvalidTaskStateException(String)
+    }
+
+    class InvalidUserInputException {
+        + InvalidUserInputException(String)
+    }
+
+    class TaskNotFoundException {
+        + TaskNotFoundException(String)
+    }
+
+    class UserNotFoundException {
+        + UserNotFoundException(String)
+    }
+
+    CircularDependencyException --|> RuntimeException
+    DependencyNotCompletedException --|> RuntimeException
+    DuplicateEmailException --|> RuntimeException
+    DuplicateTaskException --|> RuntimeException
+    FilePersistenceException --|> RuntimeException
+    InsufficientPermissionsException --|> RuntimeException
+    InvalidRoleException --|> RuntimeException
+    InvalidTaskStateException --|> RuntimeException
+    InvalidUserInputException --|> RuntimeException
+    TaskNotFoundException --|> RuntimeException
+    UserNotFoundException --|> RuntimeException
+}
+
+package "com.strms.domain.model" {
+    class Ulid {
+        - {static} ULID ULID_INSTANCE
+        - String value
+        + Ulid()
+        + Ulid(String)
+        + {static} Ulid fromString(String)
+        + {static} boolean isValid(String)
+        + boolean equals(Object)
+        + int hashCode()
+        + String toString()
+    }
+
+    class Email {
+        - {static} Pattern PATTERN
+        - String value
+        + Email(String)
+        + String toString()
+        + boolean equals(Object)
+    }
+
+    class Password {
+        - String value
+        + Password(String)
+        + String toString()
+    }
+
+    class UserAuth {
+        - Ulid id
+        - String passwordHash
+        + UserAuth(Ulid, String)
+        + Ulid getId()
+        + String getPasswordHash()
+    }
+
+    enum TaskStatus {
+        TO_DO
+        BLOCKED
+        IN_PROGRESS
+        DONE
+    }
+
+    enum PriorityLevel {
+        LOW
+        MEDIUM
+        HIGH
+        CRITICAL
+    }
+
+    enum TaskCategory {
+        BUGFIX
+        FEATURE
+        DOCUMENTATION
+        RESEARCH
+    }
+
+    enum NotificationType {
+        EMAIL
+        SMS
+        CONSOLE
+    }
+
+    class TaskHistoryEntry {
+        - String action
+        - User performedBy
+        - LocalDateTime timestamp
+        - String fieldChanged
+        - String oldValue
+        - String newValue
+        + TaskHistoryEntry(String, User, LocalDateTime)
+        + TaskHistoryEntry(String, User, LocalDateTime, String, String, String)
+        + String getAction()
+        + User getPerformedBy()
+        + LocalDateTime getTimestamp()
+        + String getFieldChanged()
+        + String getOldValue()
+        + String getNewValue()
+        + String toString()
+    }
+
+    class Task implements Comparable {
+        - Ulid ulid
+        - String title
+        - String description
+        - PriorityLevel priority
+        - TaskStatus status
+        - TaskCategory category
+        - Engineer assignedEngineer
+        - LocalDateTime deadline
+        - List dependencies
+        - List history
+        + Task(String, String, PriorityLevel, TaskCategory, LocalDateTime)
+        + Task(Ulid, String, String, PriorityLevel, TaskCategory, TaskStatus, LocalDateTime)
+        + Ulid getUlid()
+        + String getTitle()
+        + String getDescription()
+        + PriorityLevel getPriority()
+        + TaskStatus getStatus()
+        + TaskCategory getCategory()
+        + Engineer getAssignedEngineer()
+        + LocalDateTime getDeadline()
+        + List getDependencies()
+        + List getHistory()
+        + void updateTitle(String, User)
+        + void updateDescription(String, User)
+        + void changePriority(PriorityLevel, User)
+        + void updateCategory(TaskCategory, User)
+        + void updateDeadline(LocalDateTime, User)
+        + void assignEngineer(Engineer, User)
+        + void unassignEngineer(User)
+        + void addDependency(Task, User)
+        + void addDependencyUnchecked(Task)
+        + void assignEngineerUnchecked(Engineer)
+        + void removeDependency(Task, User)
+        + void updateStatus(TaskStatus, User)
+        + void markAsDone(User)
+        + void addHistoryEntry(TaskHistoryEntry)
+        + void refreshStatusFromDependencies()
+        - boolean areDependenciesCompleted()
+        - boolean dependsOn(Task)
+        - void validatePermission(User, String)
+        + int compareTo(Task)
+        + String toString()
+    }
+
+    interface UserRole {
+        + String getIdentifier()
+        + boolean canManageUsers()
+        + boolean canCreateTask()
+        + boolean canDeleteTask()
+        + boolean canAssignTask()
+        + boolean canUpdateTask()
+        + boolean canChangeTaskStatus()
+        + boolean canGenerateReports()
+    }
+
+    class AdminRole implements UserRole {
+        + String getIdentifier()
+        + boolean canManageUsers()
+        + boolean canCreateTask()
+        + boolean canDeleteTask()
+        + boolean canAssignTask()
+        + boolean canUpdateTask()
+        + boolean canChangeTaskStatus()
+        + boolean canGenerateReports()
+    }
+
+    class ManagerRole implements UserRole {
+        + String getIdentifier()
+        + boolean canManageUsers()
+        + boolean canCreateTask()
+        + boolean canDeleteTask()
+        + boolean canAssignTask()
+        + boolean canUpdateTask()
+        + boolean canChangeTaskStatus()
+        + boolean canGenerateReports()
+    }
+
+    class EngineerRole implements UserRole {
+        + String getIdentifier()
+        + boolean canManageUsers()
+        + boolean canCreateTask()
+        + boolean canDeleteTask()
+        + boolean canAssignTask()
+        + boolean canUpdateTask()
+        + boolean canChangeTaskStatus()
+        + boolean canGenerateReports()
+    }
+
+    class UserRoleFactory {
+        - {static} AdminRole adminRole
+        - {static} ManagerRole managerRole
+        - {static} EngineerRole engineerRole
+        + {static} UserRole createFromIdentifier(String)
+        + {static} AdminRole createAdmin()
+        + {static} ManagerRole createManager()
+        + {static} EngineerRole createEngineer()
+    }
+
+    abstract class User {
+        - Ulid id
+        - String name
+        - Email email
+        # User(Ulid, String, Email)
+        # User(String, Email)
+        + Ulid getId()
+        + String getName()
+        + Email getEmail()
+        + {abstract} UserRole getRole()
+    }
+
+    class Admin extends User {
+        + Admin(Ulid, String, Email)
+        + Admin(String, Email)
+        + UserRole getRole()
+    }
+
+    class Manager extends User {
+        + Manager(Ulid, String, Email)
+        + Manager(String, Email)
+        + UserRole getRole()
+    }
+
+    class Engineer extends User {
+        + Engineer(Ulid, String, Email)
+        + Engineer(String, Email)
+        + UserRole getRole()
+    }
+
+    Task --> "assignedEngineer 0..1" Engineer
+    Task --> "dependencies *" Task
+    Task --> "history *" TaskHistoryEntry
+    TaskHistoryEntry --> "performedBy" User
+    User --> "0..1" UserRole
+    Admin --> "0..1" AdminRole
+    Manager --> "0..1" ManagerRole
+    Engineer --> "0..1" EngineerRole
+}
+
+package "com.strms.domain.repository" {
+    interface TaskRepository {
+        + void save(Task) throws IOException
+        + void update(Task) throws IOException
+        + void delete(Ulid) throws IOException
+        + List<Task> findAll()
+    }
+
+    interface UserRepository {
+        + User findByEmail(Email)
+        + User findById(Ulid)
+        + UserAuth findAuthByEmail(Email) throws IOException
+        + void addUser(User, UserAuth) throws IOException
+        + void updateUser(User, UserAuth) throws IOException
+        + void deleteUser(Ulid) throws IOException
+        + List<User> getAllUsers()
+    }
+}
+
+package "com.strms.domain.service" {
+    interface PasswordHasher {
+        + String hash(Password)
+        + boolean verify(Password, String)
+    }
+}
+
+package "com.strms.infrastructure.notification" {
+    class NotificationManager implements NotificationService {
+        - {static} DateTimeFormatter DATE_FORMATTER
+        + NotificationManager()
+        + void notify(Task, NotificationType, String)
+        + void notify(Task, String)
+        + void notifyAssignment(Task, Engineer)
+        + void notifyStatusChange(Task, TaskStatus)
+        + void notifyDeadline(Task)
+        - void notifyConsole(Task, String)
+        - void notifyEmail(Task, String)
+        - void notifySms(Task, String)
+    }
+
+    NotificationManager --> "0..*" NotificationType
+}
+
+package "com.strms.infrastructure.persistence" {
+    class FileHandler {
+        + List load(String, Function) throws IOException
+        + void save(String, List, Function) throws IOException
+        + void replaceAll(String, List, Function) throws IOException
+    }
+}
+
+package "com.strms.infrastructure.repository" {
+    class FileUserRepository implements UserRepository {
+        - Map users
+        - FileHandler fileHandler
+        + FileUserRepository(FileHandler) throws IOException
+        + User findByEmail(Email)
+        + User findById(Ulid)
+        + UserAuth findAuthByEmail(Email) throws IOException
+        + void addUser(User, UserAuth) throws IOException
+        + void updateUser(User, UserAuth) throws IOException
+        + void deleteUser(Ulid) throws IOException
+        + List<User> getAllUsers()
+        - User mapLineToUser(String)
+        - UserAuth mapLineToUserAuth(String)
+        - String mapUserLineToString(UserLine)
+        - User createUserByRole(Ulid, String, Email, String)
+        - User instantiateUserByRole(Ulid, String, Email, UserRole)
+    }
+
+    class FileTaskRepository implements TaskRepository {
+        - {static} String TASKS_FILE
+        - {static} DateTimeFormatter DATE_FORMATTER
+        - Map tasks
+        - FileHandler fileHandler
+        - UserRepository userRepository
+        - Map dependencyMap
+        - Map assignedEngineerMap
+        + FileTaskRepository(FileHandler, UserRepository) throws IOException
+        + void save(Task) throws IOException
+        + void update(Task) throws IOException
+        + void delete(Ulid) throws IOException
+        + List findAll()
+        - Task mapLineToTask(String)
+        - void reconstituteDependencies()
+        - void restoreAssignedEngineers() throws IOException
+        - String mapTaskToString(Task)
+        - String serializeHistory(List)
+        - List deserializeHistory(String)
+    }
+
+    class InMemoryTaskRepository implements TaskRepository {
+        - Map tasks
+        + void save(Task) throws IOException
+        + void update(Task) throws IOException
+        + void delete(Ulid) throws IOException
+        + List<Task> findAll()
+    }
+
+    FileUserRepository --> "1" FileHandler
+    FileTaskRepository --> "1" FileHandler
+    FileTaskRepository --> "1" UserRepository
+}
+
+package "com.strms.infrastructure.security" {
+    class BCryptPasswordHasher implements PasswordHasher {
+        - {static} int WORK_FACTOR
+        + String hash(Password)
+        + boolean verify(Password, String)
+    }
+}
+
+package "com.strms.presentation.controller" {
+    abstract class BaseController {
+        # ApplicationContext context
+        # Navigator navigator
+        - boolean readyCalled
+        + void setApplicationContext(ApplicationContext)
+        + void setNavigator(Navigator)
+        - void tryCallReady()
+        # void onReady()
+    }
+
+    class LayoutController extends BaseController {
+        - StackPane topbarContainerWrapper
+        - BorderPane adminTopbar
+        - BorderPane managerTopbar
+        - BorderPane engineerTopbar
+        - StackPane contentContainer
+        - VBox notificationContainer
+        - AdminTopbarController adminTopbarController
+        - ManagerTopbarController managerTopbarController
+        - EngineerTopbarController engineerTopbarController
+        # void onReady()
+        - void injectChildrenDependencies()
+        + void setContent(Node)
+        + void updateTopbar()
+        - void hideAllTopbars()
+        + void showNotification(String)
+    }
+
+    LayoutController --> "1" AdminTopbarController
+    LayoutController --> "1" ManagerTopbarController
+    LayoutController --> "1" EngineerTopbarController
+}
+
+package "com.strms.presentation.controller.components" {
+    abstract class TopbarController extends BaseController {
+        # void navigateHome()
+        # void logout()
+    }
+
+    class AdminTopbarController extends TopbarController {
+        + void goToHome()
+        + void goToUsers()
+        + void goToAnalytics()
+        + void logout()
+    }
+
+    class ManagerTopbarController extends TopbarController {
+        + void goToHome()
+        + void goToTasks()
+        + void goToAnalytics()
+        + void logout()
+    }
+
+    class EngineerTopbarController extends TopbarController {
+        + void goToHome()
+        + void goToMyTasks()
+        + void goToAnalytics()
+        + void logout()
+    }
+}
+
+package "com.strms.presentation.controller.pages" {
+    class LoginController extends BaseController {
+        - TextField emailField
+        - PasswordField passwordField
+        - Label errorLabel
+        - Button loginButton
+        + void initialize()
+        + void login()
+    }
+
+    class HomeController extends BaseController {
+        - Label welcomeLabel
+        # void onReady()
+    }
+
+    class AddUserController extends BaseController {
+        - TextField nameField
+        - TextField emailField
+        - PasswordField passwordField
+        - Label errorLabel
+        - ChoiceBox roleChoiceBox
+        - Button addUserButton
+        + void initialize()
+        + void goBack()
+        + void addUser()
+    }
+
+    class UpdateUserController extends BaseController {
+        - TextField nameField
+        - TextField emailField
+        - PasswordField passwordField
+        - Label errorLabel
+        - ChoiceBox roleChoiceBox
+        - Button updateUserButton
+        - User userToUpdate
+        + void initialize()
+        + void setUserToUpdate(User)
+        + void goBack()
+        + void updateUser()
+    }
+
+    class UsersController extends BaseController {
+        - TableView usersTable
+        - Button addUserButton
+        - Button editButton
+        - Label emptyStateLabel
+        + void initialize()
+        # void onReady()
+        - void loadUsers()
+        - void showEmptyState()
+        + void handleEdit()
+        + void goToAddUser()
+        + void goBack()
+        - void navigateToUpdateUser(User)
+        - void addDeleteButtonColumn()
+    }
+
+    class AddTaskController extends BaseController {
+        - TextField titleField
+        - TextArea descriptionArea
+        - ChoiceBox priorityChoiceBox
+        - ChoiceBox categoryChoiceBox
+        - DatePicker deadlinePicker
+        - Label errorLabel
+        - Button addTaskButton
+        + void initialize()
+        + void goBack()
+        + void addTask()
+    }
+
+    class UpdateTaskController extends BaseController {
+        - TextField titleField
+        - TextArea descriptionArea
+        - ChoiceBox priorityChoiceBox
+        - ChoiceBox categoryChoiceBox
+        - DatePicker deadlinePicker
+        - Label errorLabel
+        - Button updateTaskButton
+        - Task taskToUpdate
+        + void initialize()
+        + void setTaskToUpdate(Task)
+        + void goBack()
+        + void updateTask()
+    }
+
+    class TasksController extends BaseController {
+        - TableView tasksTable
+        - Button editButton
+        - Label emptyStateLabel
+        - ChoiceBox filterChoiceBox
+        + void initialize()
+        - void initializeFilterChoiceBox()
+        - void applyFilter(String)
+        # void onReady()
+        - void loadTasks()
+        - void loadTasksInTable(List)
+        - void showEmptyState()
+        + void handleEdit()
+        + void goToAddTask()
+        + void goBack()
+        - void navigateToUpdateTask(Task)
+        - void addDependencyColumns()
+    }
+
+    class EngineerTasksController extends BaseController {
+        - TableView tasksTable
+        - Button detailsButton
+        - Label emptyStateLabel
+        + void initialize()
+        # void onReady()
+        - void loadTasks()
+        - void loadTasksInTable(List)
+        - void showEmptyState()
+        + void handleViewDetails()
+        + void goBack()
+        - void navigateToTaskDetails(Task)
+    }
+
+    class EngineerTaskDetailsController extends BaseController {
+        - Task task
+        - Label taskTitleLabel
+        - Label statusLabel
+        - Label priorityLabel
+        - TextArea descriptionArea
+        - ListView dependenciesListView
+        - Button markDoneButton
+        - Button updateStatusButton
+        - Label errorLabel
+        + void setTask(Task)
+        + void initialize()
+        + void markTaskAsDone()
+        + void updateStatus()
+        + void goBack()
+    }
+
+    class AnalyticsReportController extends BaseController {
+        - TextArea reportTextArea
+        - Label reportTypeLabel
+        - ComboBox reportTypeComboBox
+        + void initialize()
+        # void onReady()
+        - void generateReport()
+        + void goBack()
+    }
+
+    LoginController --> "1" SessionManager
+    AddUserController --> "1" AuthService
+    UpdateUserController --> "1" AuthService
+    UsersController --> "1" UserRepository
+    AddTaskController --> "1" TaskManager
+    UpdateTaskController --> "1" TaskManager
+    TasksController --> "1" TaskManager
+    EngineerTasksController --> "1" TaskManager
+    AnalyticsReportController --> "1" ReportGenerator
+}
+
+package "com.strms.presentation.loader" {
+    class ViewLoader {
+        + {static} FXMLLoader load(String) throws IOException
+    }
+}
+
+package "com.strms.presentation.navigation" {
+    class Navigator {
+        - ApplicationContext context
+        - LayoutController layout
+        + Navigator(LayoutController, ApplicationContext)
+        + void goTo(String)
+        + void goTo(String, Consumer<Object>)
+        - Node load(String, Consumer<Object>) throws IOException
+        + void notify(String)
+    }
+
+    Navigator --> "1" LayoutController
+    Navigator --> "1" ApplicationContext
+}
+
+package "com.strms.presentation.model" {
+    class TaskDisplay {
+        - Task task
+        - StringProperty title
+        - StringProperty priority
+        - StringProperty status
+        - StringProperty category
+        - StringProperty deadline
+        - StringProperty assignedEngineer
+        + TaskDisplay(Task)
+        + Task getTask()
+        + String getTitle()
+        + String getPriority()
+        + String getStatus()
+        + String getCategory()
+        + String getDeadline()
+        + String getAssignedEngineer()
+    }
+
+    class UserDisplay {
+        - User user
+        - StringProperty name
+        - StringProperty email
+        - StringProperty role
+        + UserDisplay(User)
+        + User getUser()
+        + String getName()
+        + String getEmail()
+        + String getRole()
+    }
+
+    TaskDisplay --> "1" Task
+    UserDisplay --> "1" User
+}
+
+package "com.strms.presentation.service" {
+    class UiConstants {
+        - UiConstants()
+        + {static} class Pages
+        + {static} class Roles
+        + {static} class Messages
+        + {static} class Styles
+        + {static} class Animations
+    }
+
+    class UiUtils {
+        - UiUtils()
+        + {static} void shakeNode(Node)
+        + {static} void addButtonHoverEffect(Button)
+        + {static} void addSelectAllOnFocus(TextInputControl)
+        + {static} void showError(Label, String)
+        + {static} void setVisibility(Node, boolean)
+        + {static} String trim(String)
+        + {static} boolean isNullOrEmpty(String)
+    }
+
+    class InputValidator {
+        - InputValidator()
+        + {static} void enableDisableButtonOnValidation(Button, TextInputControl...)
+        + {static} void enableDisableButtonOnValidation(Button, ChoiceBox, TextInputControl...)
+    }
+}
+
+' Relationships
+Main --> "1" ApplicationContext
+Main --> "1" Navigator
+Main --> "1" FileHandler
+Main --> "1" FileUserRepository
+Main --> "1" FileTaskRepository
+Main --> "1" AuthService
+Main --> "1" NotificationManager
+Main --> "1" SessionManager
+Main --> "1" TaskManager
+Main --> "1" LayoutController
+
+ApplicationContext --> "1" AuthService
+ApplicationContext --> "1" SessionManager
+ApplicationContext --> "1" UserRepository
+ApplicationContext --> "1" TaskManager
+ApplicationContext --> "1" Dashboard
+ApplicationContext --> "1" ReportGenerator
+
+AuthService --> "1" UserRepository
+AuthService --> "1" PasswordHasher
+AuthService --> "1" UserRoleFactory
+
+Dashboard --> "1" TaskManager
+Dashboard --> "1" UserRepository
+
+ReportGenerator --> "1" TaskManager
+ReportGenerator --> "1" UserRepository
+
+TaskManager --> "1" TaskRepository
+TaskManager --> "1" NotificationService
+
+SessionManager --> "0..1" User
+
+NotificationManager -.-> NotificationService
+
+FileUserRepository -.-> UserRepository
+FileTaskRepository -.-> TaskRepository
+InMemoryTaskRepository -.-> TaskRepository
+BCryptPasswordHasher -.-> PasswordHasher
+
+Navigator --> "1" BaseController
+Navigator --> "1" ApplicationContext
+
+@enduml
