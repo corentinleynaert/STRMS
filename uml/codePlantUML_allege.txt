@@ -1,0 +1,232 @@
+@startuml STRMS_Final
+
+skinparam classAttributeIconSize 0
+
+' ─── Enumerations ───────────────────────────────────────
+
+enum TaskStatus {
+  TODO
+  BLOCKED
+  IN_PROGRESS
+  DONE
+}
+
+enum PriorityLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum TaskCategory {
+  BUGFIX
+  FEATURE
+  DOCUMENTATION
+  RESEARCH
+}
+
+enum NotificationType {
+  EMAIL
+  SMS
+  CONSOLE
+}
+
+' ─── Exceptions ─────────────────────────────────────────
+
+class CircularDependencyException extends RuntimeException {
+    + CircularDependencyException(String message)
+}
+
+class DependencyNotCompletedException extends RuntimeException {
+    + DependencyNotCompletedException(String message)
+}
+
+class TaskNotFoundException extends RuntimeException {
+    + TaskNotFoundException(String message)
+}
+
+class InvalidRoleException extends RuntimeException {
+    + InvalidRoleException(String message)
+}
+
+class FilePersistenceException extends RuntimeException {
+    + FilePersistenceException(String message, Throwable cause)
+}
+
+class DuplicateTaskException extends RuntimeException {
+    + DuplicateTaskException(String message)
+}
+
+class InvalidTaskStateException extends RuntimeException {
+    + InvalidTaskStateException(String message)
+}
+
+' ─── User hierarchy ─────────────────────────────────────
+
+abstract class User {
+  # String id
+  # String name
+  # String email
+  # String password
+  --
+  + {abstract} boolean canCreateTask()
+  + {abstract} boolean canDeleteTask()
+  + {abstract} boolean canAssignTask()
+  + {abstract} boolean canUpdateTask()
+  + {abstract} boolean canGenerateReport()
+  + void updateTask(Task)
+}
+
+class Admin extends User {
+}
+
+class Manager extends User {
+  - ArrayList<Engineer> engineersManaged
+}
+
+class Engineer extends User {
+}
+
+' ─── TaskHistoryEntry ────────────────────────────────────
+
+class TaskHistoryEntry {
+  - String action
+  - User performedBy
+  - LocalDateTime timestamp
+  - String fieldChanged
+  - String oldValue
+  - String newValue
+  --
+  + String getAction()
+  + User getPerformedBy()
+  + LocalDateTime getTimestamp()
+  + String getFieldChanged()
+  + String getOldValue()
+  + String getNewValue()
+  + String toString()
+}
+
+' ─── Task ────────────────────────────────────────────────
+
+class Task implements Comparable {
+  - String id
+  - String title
+  - String description
+  - PriorityLevel priority
+  - TaskStatus status
+  - TaskCategory category
+  - NotificationType notification
+  - LocalDateTime deadline
+  - Engineer assignedEngineer
+  - ArrayList<Task> dependencies
+  - ArrayList<TaskHistoryEntry> history
+  --
+  + void updateStatus(TaskStatus, User)
+  + void updateDescription(String, User)
+  + void changePriority(PriorityLevel, User)
+  + void updateCategory(TaskCategory, User)
+  + void updateDeadline(LocalDateTime, User)
+  + void assignEngineer(Engineer, User)
+  + void unassignEngineer(User)
+  + void addDependency(Task, User)
+  + void removeDependency(Task, User)
+  + void markAsDone(User)
+  + void displayTask()
+  + void addHistoryEntry(TaskHistoryEntry)
+  + boolean areDependenciesCompleted()
+  + int compareTo(Task)
+}
+
+' ─── TaskManager ─────────────────────────────────────────
+
+class TaskManager {
+  - HashMap<String, Task> tasks
+  - HashMap<String, User> users
+  - HashSet<Task> inProgressTasks
+  - PriorityQueue<Task> readyQueue
+  --
+  + boolean addTask(String, String, PriorityLevel, TaskCategory, LocalDateTime, User)
+  + boolean deleteTask(String, User)
+  + boolean assignTask(String, Engineer, User)
+  + boolean unassignTask(String, User)
+  + boolean addDependency(String, String, User)
+  + boolean removeDependency(String, String, User)
+  + boolean changeTaskStatus(String, TaskStatus, User)
+  + boolean markTaskAsDone(String, User)
+  + boolean detectCircularDependency(Task, Task)
+  + Task findTask(String)
+  + ArrayList<Task> getInProgressTasks()
+  + ArrayList<Task> getReadyTasks()
+  + void printInProgressTasks()
+  + boolean saveTasksToFile()
+  + boolean loadTasksFromFile()
+  + boolean updateTask(String, User)
+}
+
+' ─── Utility classes ─────────────────────────────────────
+
+interface Reportable {
+  + String generateReport()
+}
+
+class ReportGenerator implements Reportable {
+  + String generateReport()
+  + String generateTaskReport()
+  + String generateUserReport()
+  + String generateOverdueTasksReport()
+  + String generateTasksByPriorityReport()
+}
+
+class FileManager {
+  + boolean saveToFile(String, List)
+  + List loadFromFile(String)
+}
+
+class NotificationManager {
+  + void notify(Task, String)
+  + void notifyAssignment(Task, Engineer)
+  + void notifyStatusChange(Task, TaskStatus)
+  + void notifyDeadline(Task)
+}
+
+class Dashboard {
+  - TaskManager taskManager
+  --
+  + int getTotalTasks()
+  + int getTodoTasks()
+  + int getInProgressTasks()
+  + int getBlockedTasks()
+  + int getDoneTasks()
+  + int getTotalUsers()
+  + int getOverdueTasks()
+  + void display()
+}
+
+' ─── Relations ───────────────────────────────────────────
+
+Task --> "0..1" Engineer : assignedEngineer
+Task --> "0..*" Task : dependencies
+Task --> "0..*" TaskHistoryEntry : history
+Task --> PriorityLevel
+Task --> TaskStatus
+Task --> TaskCategory
+Task --> NotificationType
+
+TaskHistoryEntry --> User : performedBy
+
+TaskManager --> "0..*" Task
+TaskManager --> "0..*" User
+TaskManager ..> CircularDependencyException
+TaskManager ..> DependencyNotCompletedException
+TaskManager ..> TaskNotFoundException
+TaskManager ..> InvalidRoleException
+TaskManager ..> FilePersistenceException
+TaskManager ..> DuplicateTaskException
+TaskManager ..> InvalidTaskStateException
+
+ReportGenerator --> TaskManager
+Dashboard --> TaskManager
+NotificationManager --> Task
+FileManager --> TaskManager
+
+@enduml
